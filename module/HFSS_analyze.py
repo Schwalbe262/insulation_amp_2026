@@ -3,6 +3,7 @@ HFSS analysis setup and execution functions.
 """
 
 import pandas as pd
+import numpy as np
 import time
 
 
@@ -95,16 +96,16 @@ def get_HFSS_results(project, design) :
 
     # freq1, freq2, freq3이 list인 경우 0번 인덱스 값을 사용하도록 처리
     # peak 여러개 검출 시 가장 낮은 주파수 값 사용용
-    if isinstance(freq1, list):
-        freq1 = freq1[0]
-        peak1 = peak1[0]
-    if isinstance(freq2, list):
-        freq2 = freq2[0]
-        peak2 = peak2[0]
-    if isinstance(freq3, list):
-        freq3 = freq3[0]
-        peak3 = peak3[0]
-        freq3 = freq3[0]
+    if isinstance(freq1, np.ndarray):
+        freq1 = round(float(freq1[0]), 3)
+        peak1 = round(float(peak1[0]), 3)
+    if isinstance(freq2, np.ndarray):
+        freq2 = round(float(freq2[0]), 3)
+        peak2 = round(float(peak2[0]), 3)
+    if isinstance(freq3, np.ndarray):
+        freq3 = round(float(freq3[0]), 3)
+        peak3 = round(float(peak3[0]), 3)
+
 
 
     k_10k = abs(design.post_processing.get_frequency_data(10e+3, data_freq, data_k))
@@ -149,35 +150,37 @@ def get_HFSS_results(project, design) :
     data_LTR = data2["im(Zt(Tx_port_T1,Rx_port_T1))/(2*pi*freq) []"]
 
 
-    LT_10k = design.post_processing.get_frequency_data(10e+3, data_freq, data_LTT) * 1e+6
-    LT_100k = design.post_processing.get_frequency_data(100e+3, data_freq, data_LTT) * 1e+6
-    LT_1M = design.post_processing.get_frequency_data(1e+6, data_freq, data_LTT) * 1e+6
-    LT_10M = design.post_processing.get_frequency_data(10e+6, data_freq, data_LTT) * 1e+6
-    LT_15M = design.post_processing.get_frequency_data(15e+6, data_freq, data_LTT) * 1e+6
-    LT_20M = design.post_processing.get_frequency_data(20e+6, data_freq, data_LTT) * 1e+6
-    LT_25M = design.post_processing.get_frequency_data(25e+6, data_freq, data_LTT) * 1e+6
-    LT_30M = design.post_processing.get_frequency_data(30e+6, data_freq, data_LTT) * 1e+6
-    LT_100M = design.post_processing.get_frequency_data(100e+6, data_freq, data_LTT) * 1e+6
+    # 단위는 nH로 변환  
 
-    LR_10k = design.post_processing.get_frequency_data(10e+3, data_freq, data_LRR) * 1e+6
-    LR_100k = design.post_processing.get_frequency_data(100e+3, data_freq, data_LRR) * 1e+6
-    LR_1M = design.post_processing.get_frequency_data(1e+6, data_freq, data_LRR) * 1e+6
-    LR_10M = design.post_processing.get_frequency_data(10e+6, data_freq, data_LRR) * 1e+6
-    LR_15M = design.post_processing.get_frequency_data(15e+6, data_freq, data_LRR) * 1e+6
-    LR_20M = design.post_processing.get_frequency_data(20e+6, data_freq, data_LRR) * 1e+6
-    LR_25M = design.post_processing.get_frequency_data(25e+6, data_freq, data_LRR) * 1e+6
-    LR_30M = design.post_processing.get_frequency_data(30e+6, data_freq, data_LRR) * 1e+6
-    LR_100M = design.post_processing.get_frequency_data(100e+6, data_freq, data_LRR) * 1e+6
+    LT_10k = design.post_processing.get_frequency_data(10e+3, data_freq, data_LTT) * 1e+9
+    LT_100k = design.post_processing.get_frequency_data(100e+3, data_freq, data_LTT) * 1e+9
+    LT_1M = design.post_processing.get_frequency_data(1e+6, data_freq, data_LTT) * 1e+9
+    LT_10M = design.post_processing.get_frequency_data(10e+6, data_freq, data_LTT) * 1e+9
+    LT_15M = design.post_processing.get_frequency_data(15e+6, data_freq, data_LTT) * 1e+9
+    LT_20M = design.post_processing.get_frequency_data(20e+6, data_freq, data_LTT) * 1e+9
+    LT_25M = design.post_processing.get_frequency_data(25e+6, data_freq, data_LTT) * 1e+9
+    LT_30M = design.post_processing.get_frequency_data(30e+6, data_freq, data_LTT) * 1e+9
+    LT_100M = design.post_processing.get_frequency_data(100e+6, data_freq, data_LTT) * 1e+9
 
-    LM_10k = design.post_processing.get_frequency_data(10e+3, data_freq, data_LTR) * 1e+6
-    LM_100k = design.post_processing.get_frequency_data(100e+3, data_freq, data_LTR) * 1e+6
-    LM_1M = design.post_processing.get_frequency_data(1e+6, data_freq, data_LTR) * 1e+6
-    LM_10M = design.post_processing.get_frequency_data(10e+6, data_freq, data_LTR) * 1e+6
-    LM_15M = design.post_processing.get_frequency_data(15e+6, data_freq, data_LTR) * 1e+6
-    LM_20M = design.post_processing.get_frequency_data(20e+6, data_freq, data_LTR) * 1e+6
-    LM_25M = design.post_processing.get_frequency_data(25e+6, data_freq, data_LTR) * 1e+6
-    LM_30M = design.post_processing.get_frequency_data(30e+6, data_freq, data_LTR) * 1e+6
-    LM_100M = design.post_processing.get_frequency_data(100e+6, data_freq, data_LTR) * 1e+6
+    LR_10k = design.post_processing.get_frequency_data(10e+3, data_freq, data_LRR) * 1e+9
+    LR_100k = design.post_processing.get_frequency_data(100e+3, data_freq, data_LRR) * 1e+9
+    LR_1M = design.post_processing.get_frequency_data(1e+6, data_freq, data_LRR) * 1e+9
+    LR_10M = design.post_processing.get_frequency_data(10e+6, data_freq, data_LRR) * 1e+9
+    LR_15M = design.post_processing.get_frequency_data(15e+6, data_freq, data_LRR) * 1e+9
+    LR_20M = design.post_processing.get_frequency_data(20e+6, data_freq, data_LRR) * 1e+9
+    LR_25M = design.post_processing.get_frequency_data(25e+6, data_freq, data_LRR) * 1e+9
+    LR_30M = design.post_processing.get_frequency_data(30e+6, data_freq, data_LRR) * 1e+9
+    LR_100M = design.post_processing.get_frequency_data(100e+6, data_freq, data_LRR) * 1e+9
+
+    LM_10k = design.post_processing.get_frequency_data(10e+3, data_freq, data_LTR) * 1e+9
+    LM_100k = design.post_processing.get_frequency_data(100e+3, data_freq, data_LTR) * 1e+9
+    LM_1M = design.post_processing.get_frequency_data(1e+6, data_freq, data_LTR) * 1e+9
+    LM_10M = design.post_processing.get_frequency_data(10e+6, data_freq, data_LTR) * 1e+9
+    LM_15M = design.post_processing.get_frequency_data(15e+6, data_freq, data_LTR) * 1e+9
+    LM_20M = design.post_processing.get_frequency_data(20e+6, data_freq, data_LTR) * 1e+9
+    LM_25M = design.post_processing.get_frequency_data(25e+6, data_freq, data_LTR) * 1e+9
+    LM_30M = design.post_processing.get_frequency_data(30e+6, data_freq, data_LTR) * 1e+9
+    LM_100M = design.post_processing.get_frequency_data(100e+6, data_freq, data_LTR) * 1e+9
 
     columns = ['LT_10k', 'LT_100k', 'LT_1M', 'LT_10M', 'LT_15M', 'LT_20M', 'LT_25M', 'LT_30M', 'LT_100M']
     L_raw = [LT_10k, LT_100k, LT_1M, LT_10M, LT_15M, LT_20M, LT_25M, LT_30M, LT_100M]
