@@ -56,22 +56,22 @@ def create_winding(design, name, up=True, *args, **kwargs):
         winding.move([0,0,f"({move})"])
 
         if up:
-            point1 = [f"{coil.points[0][0]}+{coil.width}/2", f"{coil.points[0][1]}-{coil.width}/2", f"({coil.points[0][2]} - ({PCB_thickness})/2)"]
-            point2 = [f"{coil.points[0][0]}+{coil.width}/2", f"{coil.points[0][1]}-{coil.width}/2", f"({coil.points[0][2]} + (({coil_gap})+({PCB_thickness}))/2)"]
+            point1 = [f"{coil.points[0][0]}+{coil.width}/2", f"{coil.points[0][1]}-{coil.width}", f"({coil.points[0][2]} - ({PCB_thickness})/2)"]
+            point2 = [f"{coil.points[0][0]}+{coil.width}/2", f"{coil.points[0][1]}-{coil.width}", f"({coil.points[0][2]} + (({coil_gap})+({PCB_thickness}))/2)"]
             ter1 = design.model3d.winding.create_polyline(name=f"{name}_ter1", points=[point1, point2], width=coil.width, height=coil.width)
-            point1 = [f"{coil.points[-1][0]}-{coil.width}/2", f"{coil.points[-1][1]}+{coil.width}/2", f"({coil.points[-1][2]} - ({PCB_thickness})/2)"]
-            point2 = [f"{coil.points[-1][0]}-{coil.width}/2", f"{coil.points[-1][1]}+{coil.width}/2", f"({coil.points[-1][2]} + (({coil_gap})+({PCB_thickness}))/2)"]
+            point1 = [f"{coil.points[-1][0]}-{coil.width}/2", f"{coil.points[-1][1]}+{coil.width}", f"({coil.points[-1][2]} - ({PCB_thickness})/2)"]
+            point2 = [f"{coil.points[-1][0]}-{coil.width}/2", f"{coil.points[-1][1]}+{coil.width}", f"({coil.points[-1][2]} + (({coil_gap})+({PCB_thickness}))/2)"]
             ter2 = design.model3d.winding.create_polyline(name=f"{name}_ter2", points=[point1, point2], width=coil.width, height=coil.width)
 
             ter_edge1 = ter1.top_face_y.top_edge_z
             ter_edge2 = ter2.bottom_face_y.top_edge_z
 
         else:
-            point1 = [f"{coil.points[0][0]}+{coil.width}/2", f"{coil.points[0][1]}-{coil.width}/2", f"({coil.points[0][2]} + ({PCB_thickness})/2)"]
-            point2 = [f"{coil.points[0][0]}+{coil.width}/2", f"{coil.points[0][1]}-{coil.width}/2", f"({coil.points[0][2]} - ({coil_gap}) + 3*({PCB_thickness})/2)mm"]
+            point1 = [f"{coil.points[0][0]}+{coil.width}/2", f"{coil.points[0][1]}-{coil.width}", f"({coil.points[0][2]} + ({PCB_thickness})/2)"]
+            point2 = [f"{coil.points[0][0]}+{coil.width}/2", f"{coil.points[0][1]}-{coil.width}", f"({coil.points[0][2]} - ({coil_gap}) + 3*({PCB_thickness})/2)mm"]
             ter1 = design.model3d.winding.create_polyline(name=f"{name}_ter1", points=[point1, point2], width=coil.width, height=coil.width)
-            point1 = [f"{coil.points[-1][0]}-{coil.width}/2", f"{coil.points[-1][1]}+{coil.width}/2", f"({coil.points[-1][2]} + ({PCB_thickness})/2)"]
-            point2 = [f"{coil.points[-1][0]}-{coil.width}/2", f"{coil.points[-1][1]}+{coil.width}/2", f"({coil.points[-1][2]} - ({coil_gap}) + 3*({PCB_thickness})/2)mm"]
+            point1 = [f"{coil.points[-1][0]}-{coil.width}/2", f"{coil.points[-1][1]}+{coil.width}", f"({coil.points[-1][2]} + ({PCB_thickness})/2)"]
+            point2 = [f"{coil.points[-1][0]}-{coil.width}/2", f"{coil.points[-1][1]}+{coil.width}", f"({coil.points[-1][2]} - ({coil_gap}) + 3*({PCB_thickness})/2)mm"]
             ter2 = design.model3d.winding.create_polyline(name=f"{name}_ter2", points=[point1, point2], width=coil.width, height=coil.width)
 
             ter_edge1 = ter1.bottom_face_y.bottom_edge_z
