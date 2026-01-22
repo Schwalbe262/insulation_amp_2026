@@ -249,11 +249,11 @@ def get_HFSS_results(project, design) :
     S12_raw = [S12_10k, S12_100k, S12_1M, S12_10M, S12_15M, S12_20M, S12_25M, S12_30M, S12_100M]
     pd_S12 = pd.DataFrame([S12_raw], columns=columns)       
 
-    columns = ['S11_resonant_freq', 'S11_resonant_dB', 'S22_resonant_freq', 'S22_resonant_dB', 'S12_resonant_freq', 'S12_resonant_dB']
-    resonant_raw = [freq1, peak1, freq2, peak2, freq3, peak3]
-    pd_resonant = pd.DataFrame([resonant_raw], columns=columns)
+    columns = ['S11_peak_freq', 'S11_peak_dB', 'S22_peak_freq', 'S22_peak_dB', 'S12_peak_freq', 'S12_peak_dB']
+    resonant_raw = [freq1/1e+6, peak1, freq2/1e+6, peak2, freq3/1e+6, peak3]
+    pd_Speak = pd.DataFrame([resonant_raw], columns=columns)
 
 
-    pd_data = pd.concat([pd_resonant, pd_k, pd_L, pd_LR, pd_LM, pd_S11, pd_S22, pd_S12], axis=1)
+    pd_data = pd.concat([pd_resonant, pd_k, pd_L, pd_LR, pd_LM, pd_S11, pd_S22, pd_S12, pd_Speak], axis=1)
 
     return pd_data

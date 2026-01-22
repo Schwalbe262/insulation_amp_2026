@@ -14,27 +14,27 @@ def set_variable(simulation, design):
         simulation: Simulation object to store variable values
         design: pyDesign object to set design variables
     """
-    # Tx variables
-    simulation.Tx_outer_x = design.random_variable(variable_name="Tx_outer_x", lower=0.8, upper=2.5, resolution=0.1, unit="mm")
-    simulation.Tx_ratio = design.random_variable(lower=0.4, upper=0.9, resolution=0.01)
-    simulation.Tx_outer_y = simulation.Tx_ratio * simulation.Tx_outer_x
+    # # Tx variables
+    # simulation.Tx_outer_x = design.random_variable(variable_name="Tx_outer_x", lower=0.8, upper=2.5, resolution=0.1, unit="mm")
+    # simulation.Tx_ratio = design.random_variable(lower=0.4, upper=0.9, resolution=0.01)
+    # simulation.Tx_outer_y = simulation.Tx_ratio * simulation.Tx_outer_x
 
-    Tx_inner_min = 0.4 * min(simulation.Tx_outer_x, simulation.Tx_outer_y)
-    Tx_inner_max = 0.8 * min(simulation.Tx_outer_x, simulation.Tx_outer_y)
-    simulation.Tx_inner = design.random_variable(variable_name="Tx_inner", lower=Tx_inner_min, upper=Tx_inner_max, resolution=0.01, unit="mm")
+    # Tx_inner_min = 0.4 * min(simulation.Tx_outer_x, simulation.Tx_outer_y)
+    # Tx_inner_max = 0.8 * min(simulation.Tx_outer_x, simulation.Tx_outer_y)
+    # simulation.Tx_inner = design.random_variable(variable_name="Tx_inner", lower=Tx_inner_min, upper=Tx_inner_max, resolution=0.01, unit="mm")
 
-    Tx_fillet_min = simulation.Tx_inner * (math.tan(75 * math.pi/180) - 1) / math.tan(75 * math.pi/180) * 1.1
-    Tx_fillet_max = simulation.Tx_inner * 0.8 if simulation.Tx_inner * 0.8 > Tx_fillet_min else simulation.Tx_inner * 0.9
-    simulation.Tx_fillet = design.random_variable(variable_name="Tx_fillet", lower=Tx_fillet_min, upper=Tx_fillet_max, resolution=0.01, unit="mm")
+    # Tx_fillet_min = simulation.Tx_inner * (math.tan(75 * math.pi/180) - 1) / math.tan(75 * math.pi/180) * 1.1
+    # Tx_fillet_max = simulation.Tx_inner * 0.8 if simulation.Tx_inner * 0.8 > Tx_fillet_min else simulation.Tx_inner * 0.9
+    # simulation.Tx_fillet = design.random_variable(variable_name="Tx_fillet", lower=Tx_fillet_min, upper=Tx_fillet_max, resolution=0.01, unit="mm")
 
-    simulation.Tx_fill_factor = design.random_variable(variable_name="Tx_fill_factor", lower=0.3, upper=0.8, resolution=0.01, unit="")
+    # simulation.Tx_fill_factor = design.random_variable(variable_name="Tx_fill_factor", lower=0.3, upper=0.8, resolution=0.01, unit="")
 
-    # Rx variables
-    simulation.Tx_Rx_ratio = design.random_variable(lower=0.6, upper=1.5, resolution=0.01)  # x방향 기준으로 Rx가 Tx보다 몇배 더 큰지 설정
-    simulation.Rx_outer_x = simulation.Tx_outer_x * simulation.Tx_Rx_ratio
+    # # Rx variables
+    # simulation.Tx_Rx_ratio = design.random_variable(lower=0.6, upper=1.5, resolution=0.01)  # x방향 기준으로 Rx가 Tx보다 몇배 더 큰지 설정
+    # simulation.Rx_outer_x = simulation.Tx_outer_x * simulation.Tx_Rx_ratio
 
-    simulation.Rx_ratio = design.random_variable(lower=0.4, upper=0.9, resolution=0.01)
-    simulation.Rx_outer_y = simulation.Rx_ratio * simulation.Rx_outer_x
+    # simulation.Rx_ratio = design.random_variable(lower=0.4, upper=0.9, resolution=0.01)
+    # simulation.Rx_outer_y = simulation.Rx_ratio * simulation.Rx_outer_x
 
     """
     임시변경
@@ -49,6 +49,16 @@ def set_variable(simulation, design):
     simulation.Rx_outer_y = design.random_variable(variable_name="Rx_outer_x", lower=1.2, upper=2.0, resolution=0.01, unit="mm")
     simulation.Tx_ratio = simulation.Tx_outer_y / simulation.Tx_outer_x
     simulation.Rx_ratio = simulation.Rx_outer_y / simulation.Rx_outer_x
+
+    Tx_inner_min = 0.4 * min(simulation.Tx_outer_x, simulation.Tx_outer_y)
+    Tx_inner_max = 0.8 * min(simulation.Tx_outer_x, simulation.Tx_outer_y)
+    simulation.Tx_inner = design.random_variable(variable_name="Tx_inner", lower=Tx_inner_min, upper=Tx_inner_max, resolution=0.01, unit="mm")
+
+    Tx_fillet_min = simulation.Tx_inner * (math.tan(75 * math.pi/180) - 1) / math.tan(75 * math.pi/180) * 1.1
+    Tx_fillet_max = simulation.Tx_inner * 0.8 if simulation.Tx_inner * 0.8 > Tx_fillet_min else simulation.Tx_inner * 0.9
+    simulation.Tx_fillet = design.random_variable(variable_name="Tx_fillet", lower=Tx_fillet_min, upper=Tx_fillet_max, resolution=0.01, unit="mm")
+
+    simulation.Tx_fill_factor = design.random_variable(variable_name="Tx_fill_factor", lower=0.3, upper=0.8, resolution=0.01, unit="")
 
     """
     임시변경
