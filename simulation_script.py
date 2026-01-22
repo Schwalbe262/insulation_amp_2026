@@ -19,7 +19,7 @@ import pandas as pd
 
 from module.modeling import create_winding, create_PCB, create_region
 from module.variable import set_variable
-from module.HFSS_analyze import HFSS_analyze, get_HFSS_results
+from module.HFSS_analyze import HFSS_analyze, get_HFSS_results, simulation_report
 
 import platform
 import csv
@@ -100,3 +100,6 @@ class Simulation() :
     def get_HFSS_results(self, project, design):
         """Get HFSS results using the HFSS_analyze module."""
         return get_HFSS_results(project, design)
+
+    def simulation_report(self, design, start_time):    
+        return simulation_report(design, start_time)

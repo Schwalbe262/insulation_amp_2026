@@ -97,10 +97,15 @@ def get_HFSS_results(project, design) :
     # peak 여러개 검출 시 가장 낮은 주파수 값 사용용
     if isinstance(freq1, list):
         freq1 = freq1[0]
+        peak1 = peak1[0]
     if isinstance(freq2, list):
         freq2 = freq2[0]
+        peak2 = peak2[0]
     if isinstance(freq3, list):
         freq3 = freq3[0]
+        peak3 = peak3[0]
+        freq3 = freq3[0]
+
 
     k_10k = abs(design.post_processing.get_frequency_data(10e+3, data_freq, data_k))
     k_100k = abs(design.post_processing.get_frequency_data(100e+3, data_freq, data_k))
@@ -266,3 +271,18 @@ def get_HFSS_results(project, design) :
     pd_data = pd.concat([pd_resonant, pd_k, pd_L, pd_LR, pd_LM, pd_S11, pd_S22, pd_S12, pd_Speak], axis=1)
 
     return pd_data
+
+
+
+def simulation_report(design, start_time):
+
+    pass_number, tetrahedra, delta_S = design.get_report_data(setup=design.setup_names[0])
+
+    end_time = time.time()
+    execution_time = int(end_time - start_time)
+
+    columns = ['time', 'pass_number', 'tetrahedra', 'delta_S']
+    sim_result_raw = [execution_time, pass_number, tetrahedra, delta_S]
+    sim_result = pd.DataFrame([sim_result_raw], columns=columns)
+
+    return sim_result
