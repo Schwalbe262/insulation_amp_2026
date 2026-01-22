@@ -177,8 +177,10 @@ def create_PCB(design):
     origin_z = f"Tx_Rx_gap/2 + Rx_layer*PCB_thickness + (Rx_layer-1)*Rx_Rx_gap"
     dimension_z = f"({origin_z}) + Tx_Rx_gap/2 + Tx_layer*PCB_thickness + (Tx_layer-1)*Tx_Tx_gap"
 
-    origin = [f"-(1.4*{outer_x})", f"-(1.4*{outer_y})", f"-({origin_z})"]
-    dimension = [f"2*(1.4*{outer_x})", f"2*(1.4*{outer_y})", f"({dimension_z})"]
+    ratio = 1.6
+
+    origin = [f"-({ratio}*{outer_x})", f"-({ratio}*{outer_y})", f"-({origin_z})"]
+    dimension = [f"2*({ratio}*{outer_x})", f"2*({ratio}*{outer_y})", f"({dimension_z})"]
 
     PCB = design.modeler.create_box(
         origin=origin,

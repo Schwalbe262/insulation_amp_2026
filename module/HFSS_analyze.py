@@ -93,6 +93,15 @@ def get_HFSS_results(project, design) :
     freq2, peak2 = design.post_processing.detect_peak(freq=data_freq, data=data_ZRR) # Z22 공진주파수
     freq3, peak3 = design.post_processing.detect_peak(freq=data_freq, data=data_ZTR) # Z12 공진주파수
 
+    # freq1, freq2, freq3이 list인 경우 0번 인덱스 값을 사용하도록 처리
+    # peak 여러개 검출 시 가장 낮은 주파수 값 사용용
+    if isinstance(freq1, list):
+        freq1 = freq1[0]
+    if isinstance(freq2, list):
+        freq2 = freq2[0]
+    if isinstance(freq3, list):
+        freq3 = freq3[0]
+
     k_10k = abs(design.post_processing.get_frequency_data(10e+3, data_freq, data_k))
     k_100k = abs(design.post_processing.get_frequency_data(100e+3, data_freq, data_k))
     k_1M = abs(design.post_processing.get_frequency_data(1e+6, data_freq, data_k))
