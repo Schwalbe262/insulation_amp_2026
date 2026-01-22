@@ -76,7 +76,7 @@ def get_HFSS_results(project, design) :
 
     report1 = design.post.create_report(expressions=result_expressions, setup_sweep_name=None, domain='Sweep', 
                                     variations=None, primary_sweep_variable=None, secondary_sweep_variable=None, 
-                                    report_category="Terminal Solution Data", plot_type='Rectangular Plot', context=None, subdesign_id=None, polyline_points=1001, plot_name=plot_name)
+                                    report_category="Terminal Solution Data", plot_type='Rectangular Plot', context=None, subdesign_id=None, polyline_points=1001, plot_name="Impedance Data")
     time.sleep(1)
     sim_data1 = design.post.export_report_to_csv(project_dir=project_dir, plot_name=report1.plot_name, uniform=False, start=None, end=None, step=None, use_trace_number_format=False)
     data1 = pd.read_csv(sim_data1)
@@ -123,7 +123,7 @@ def get_HFSS_results(project, design) :
 
     report2 = design.post.create_report(expressions=result_expressions, setup_sweep_name=None, domain='Sweep', 
                                     variations=None, primary_sweep_variable=None, secondary_sweep_variable=None, 
-                                    report_category="Terminal Solution Data", plot_type='Rectangular Plot', context=None, subdesign_id=None, polyline_points=1001, plot_name=report2.plot_name)
+                                    report_category="Terminal Solution Data", plot_type='Rectangular Plot', context=None, subdesign_id=None, polyline_points=1001, plot_name="Inductance Data")
     time.sleep(1)
     sim_data2 = design.post.export_report_to_csv(project_dir=project_dir, plot_name=report2.plot_name, uniform=False, start=None, end=None, step=None, use_trace_number_format=False)
     data2 = pd.read_csv(sim_data2)
@@ -188,7 +188,7 @@ def get_HFSS_results(project, design) :
 
     report3 = design.post.create_report(expressions=result_expressions, setup_sweep_name=None, domain='Sweep', 
                                     variations=None, primary_sweep_variable=None, secondary_sweep_variable=None, 
-                                    report_category="Terminal Solution Data", plot_type='Rectangular Plot', context=None, subdesign_id=None, polyline_points=1001, plot_name=report3.plot_name)
+                                    report_category="Terminal Solution Data", plot_type='Rectangular Plot', context=None, subdesign_id=None, polyline_points=1001, plot_name="S-parameter Data")
     time.sleep(1)
     sim_data3 = design.post.export_report_to_csv(project_dir=project_dir, plot_name=plot_name, uniform=False, start=None, end=None, step=None, use_trace_number_format=False)
     data3 = pd.read_csv(sim_data3)
