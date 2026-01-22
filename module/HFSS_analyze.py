@@ -104,7 +104,7 @@ def get_HFSS_results(project, design) :
     k_100M = abs(design.post_processing.get_frequency_data(100e+6, data_freq, data_k))
 
     columns = ['TT_resonant_freq', 'TT_resonant_Z', 'RR_resonant_freq', 'RR_resonant_Z', 'TR_resonant_freq', 'TR_resonant_Z']
-    resonant_raw = [freq1, peak1, freq2, peak2, freq3, peak3]
+    resonant_raw = [freq1/1e+6, peak1, freq2/1e+6, peak2, freq3/1e+6, peak3]
     pd_resonant = pd.DataFrame([resonant_raw], columns=columns)
 
     columns = ['k_10k', 'k_100k', 'k_1M', 'k_10M', 'k_15M', 'k_20M', 'k_25M', 'k_30M', 'k_100M']
@@ -190,7 +190,7 @@ def get_HFSS_results(project, design) :
                                     variations=None, primary_sweep_variable=None, secondary_sweep_variable=None, 
                                     report_category="Terminal Solution Data", plot_type='Rectangular Plot', context=None, subdesign_id=None, polyline_points=1001, plot_name="S-parameter Data")
     time.sleep(1)
-    sim_data3 = design.post.export_report_to_csv(project_dir=project_dir, plot_name=plot_name, uniform=False, start=None, end=None, step=None, use_trace_number_format=False)
+    sim_data3 = design.post.export_report_to_csv(project_dir=project_dir, plot_name=report3.plot_name, uniform=False, start=None, end=None, step=None, use_trace_number_format=False)
     data3 = pd.read_csv(sim_data3)
     data3 = design.post_processing.data_preprocessing(data3)
 

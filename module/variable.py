@@ -129,3 +129,5 @@ def set_variable(simulation, design):
     
     simulation.input = pd.DataFrame([simulation.input_raw], columns=columns)
 
+    return simulation.input
+

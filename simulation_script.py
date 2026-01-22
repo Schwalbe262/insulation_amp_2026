@@ -77,7 +77,7 @@ class Simulation() :
 
     def set_variable(self, design):
         """Set variables using the variable module."""
-        set_variable(self, design)
+        return set_variable(self, design)
 
 
     def create_winding(self, design, name, up=True, *args, **kwargs):
