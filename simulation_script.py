@@ -59,6 +59,10 @@ class Simulation() :
 
         self.desktop = pyDesktop(version=None, non_graphical=GUI)
 
+    
+
+    def create_simulation_name(self):
+
         file_path = "./simulation_num.txt"
 
         # 파일이 존재하지 않으면 생성
@@ -81,12 +85,6 @@ class Simulation() :
             file.seek(0)
             file.truncate()
             file.write(str(content))
-
-
-
-        # self.desktop.create_project(name=self.PROJECT_NAME)
-
-
 
 
     def set_variable(self, design):
@@ -136,6 +134,8 @@ class Simulation() :
 def run(simulation=None):
     """시뮬레이션을 실행합니다."""
     sim1 = simulation
+
+    sim1.create_simulation_name()
 
     # simulation 디렉토리 생성 (존재하지 않으면)
     simulation_dir = "./simulation"
