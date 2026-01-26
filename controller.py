@@ -32,14 +32,7 @@ while True:
     
     for i in range(itr):
         print(f"{i+1}번째 simulation.sh 제출 (sbatch) 실행 중...")
-        subprocess.run(["sbatch", "simulation1.sh"])
-        time.sleep(5)
-        subprocess.run(["squeue", "-u", "r1jae262"])
-        time.sleep(60)
-
-    for i in range(itr):
-        print(f"{i+1}번째 simulation2.sh 제출 (sbatch) 실행 중...")
-        subprocess.run(["sbatch", "simulation2.sh"])
+        subprocess.run(["sbatch", "simulation.sh"])
         time.sleep(5)
         subprocess.run(["squeue", "-u", "r1jae262"])
         time.sleep(60)
