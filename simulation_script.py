@@ -352,6 +352,9 @@ if __name__ == "__main__":
     for i in range(10000):
 
         try :
+            print("================================================")
+            print(f"loop {i} : simulation {sim.PROJECT_NAME} start!!")
+            print("================================================")
             run(simulation = sim)
             print("================================================")
             print(f"loop {i} : simulation {sim.PROJECT_NAME} success!!")
