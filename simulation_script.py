@@ -20,6 +20,7 @@ import pandas as pd
 from module.modeling import create_winding, create_PCB, create_region
 from module.variable import set_variable
 from module.HFSS_analyze import HFSS_analyze, get_HFSS_results, simulation_report
+from module.circuit_analyze import create_HFSS_link_model, simulation_setup, create_schematic, create_output_variables, create_report, change_R
 
 import platform
 import csv
@@ -76,30 +77,43 @@ class Simulation() :
 
 
     def set_variable(self, design):
-        """Set variables using the variable module."""
         return set_variable(self, design)
 
-
     def create_winding(self, design, name, up=True, *args, **kwargs):
-        """Create a winding using the modeling module."""
         return create_winding(design, name, up, *args, **kwargs)
 
-
     def create_PCB(self, design):
-        """Create a PCB using the modeling module."""
         return create_PCB(design)
 
     def create_region(self, design):    
-        """Create a region in the design."""
         return create_region(design)
 
     def HFSS_analyze(self, project, design):
-        """Set up and execute HFSS analysis using the HFSS_analyze module."""
         return HFSS_analyze(self, project, design)
 
     def get_HFSS_results(self, project, design):
-        """Get HFSS results using the HFSS_analyze module."""
         return get_HFSS_results(project, design)
 
     def simulation_report(self, design, start_time):    
         return simulation_report(design, start_time)
+
+    def create_HFSS_link_model(self, link_name="HFSS_link_model", project=None, HFSS_design=None, circuit_design=None, Tx_port=None, Rx_port=None):
+        return create_HFSS_link_model(link_name=link_name, project=project, HFSS_design=HFSS_design, circuit_design=circuit_design, Tx_port=Tx_port, Rx_port=Rx_port)
+
+    def simulation_setup(self, circuit_design=None):
+        return simulation_setup(circuit_design=circuit_design)
+
+    def create_schematic(self, circuit_design=None):
+        return create_schematic(circuit_design=circuit_design)
+
+    def create_output_variables(self, circuit_design=None):
+        return create_output_variables(circuit_design=circuit_design)
+
+    def create_report(self, project, circuit_design=None, name=""):
+        return create_report(project=project, circuit_design=circuit_design, name=name)
+
+    def change_R(self, circuit_design=None, R=None):
+        return change_R(circuit_design=circuit_design, R=R)
+
+
+        
