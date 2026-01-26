@@ -14,6 +14,7 @@ while True:
     subprocess.run(["scancel", "-u", "r1jae262", "--signal=kill"])
     print("rm rf")
     subprocess.run(["rm", "-rf", "simulation"])
+    subprocess.run(["rm", "-rf", "simulation_num.txt"])
 
     subprocess.run(["rm", "-rf", "error"])
     subprocess.run(["rm", "-rf", "log"])
