@@ -342,6 +342,14 @@ if __name__ == "__main__":
     import traceback
     import sys
 
+    # SLURM(out 파일)에서는 stdout/stderr가 block-buffering이라 print가 바로 안 찍히는 경우가 많음
+    # 가능하면 라인 버퍼링으로 전환 + print flush 사용
+    try:
+        sys.stdout.reconfigure(line_buffering=True)
+        sys.stderr.reconfigure(line_buffering=True)
+    except Exception:
+        pass
+
     os_name = platform.system()
     if os_name == "Windows":
         GUI = False
@@ -353,23 +361,23 @@ if __name__ == "__main__":
         desktop = None
         try:
             with pyDesktop(version=None, non_graphical=GUI) as desktop:
-                print("================================================")
-                print(f"loop {itr} : simulation start!!")
-                print("================================================")
+                print("================================================", flush=True)
+                print(f"loop {itr} : simulation start!!", flush=True)
+                print("================================================", flush=True)
                 sim = Simulation(desktop=desktop)
                 run(simulation=sim)
-                print("================================================")
-                print(f"loop {itr} : simulation {sim.PROJECT_NAME} success!!")
-                print("================================================")
+                print("================================================", flush=True)
+                print(f"loop {itr} : simulation {sim.PROJECT_NAME} success!!", flush=True)
+                print("================================================", flush=True)
         except Exception:
             error_msg = f"Error in iteration {itr}:\n{traceback.format_exc()}"
-            print("================================================")
+            print("================================================", flush=True)
             print(error_msg, file=sys.stderr)
-            print("================================================")
+            print("================================================", flush=True)
             sys.stderr.flush()
-            print("================================================")
-            print(f"loop {itr} : simulation failed!!")
-            print("================================================")
+            print("================================================", flush=True)
+            print(f"loop {itr} : simulation failed!!", flush=True)
+            print("================================================", flush=True)
             # 실패해도 다음 iteration 진행
         finally:
             # Linux에서 1회 실행 후 AEDT 프로세스가 남아 다음 실행을 깨는 케이스가 있어,
@@ -383,6 +391,12 @@ if __name__ == "__main__":
                     desktop.kill_process()
                 except Exception:
                     pass
+            # kill 이전/이후 상관없이 flush 보장
+            try:
+                sys.stdout.flush()
+                sys.stderr.flush()
+            except Exception:
+                pass
             time.sleep(2)
         
 
