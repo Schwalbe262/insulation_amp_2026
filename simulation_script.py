@@ -269,7 +269,7 @@ def run(simulation=None):
 
     project1.delete()
 
-    # sim1.desktop.close()
+    sim1.desktop.close()
 
 
 
@@ -362,10 +362,12 @@ if __name__ == "__main__":
         try:
             # close_on_exit=True인 상태에서 __exit__가 블로킹되어 다음 루프로 못 넘어가는 케이스가 있어
             # 컨텍스트 exit에서는 release만 하고, 종료는 finally에서 kill_process로 확실히 정리한다.
+            print("================================================", flush=True)
+            print(f"loop {itr} : desktop init start", flush=True)
+            print("================================================", flush=True)
             with pyDesktop(version=None, non_graphical=GUI, close_on_exit=False, new_desktop=True) as desktop:
-                print("================================================", flush=True)
+                print(f"loop {itr} : desktop init done (pid={getattr(desktop, 'pid', None)})", flush=True)
                 print(f"loop {itr} : simulation start!!", flush=True)
-                print("================================================", flush=True)
                 sim = Simulation(desktop=desktop)
                 run(simulation=sim)
                 print("================================================", flush=True)
