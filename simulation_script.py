@@ -45,19 +45,14 @@ from scipy.signal import find_peaks
 
 class Simulation() :
 
-    def __init__(self) :
+    def __init__(self, desktop=None) :
 
         self.NUM_CORE = 8
         self.NUM_TASK = 1
 
-        
-        os_name = platform.system()
-        if os_name == "Windows":
-            GUI = False
-        else :
-            GUI = True
-
-        self.desktop = pyDesktop(version=None, non_graphical=GUI)
+        # Desktop은 바깥에서 생성(with 포함)해서 주입하는 것을 권장
+        # (루프 중 프로젝트 close/delete가 Desktop 핸들을 무효화시키는 문제를 줄이기 위함)
+        self.desktop = desktop
 
     
 
@@ -347,34 +342,50 @@ if __name__ == "__main__":
     import traceback
     import sys
 
-    sim = Simulation()
+    os_name = platform.system()
+    if os_name == "Windows":
+        GUI = False
+    else:
+        GUI = True
 
-    for i in range(10000):
+    # Desktop 세션은 전체 루프 동안 1번만 열어서 재사용하는 것을 권장
+    # (pyaedt Desktop은 context manager로 사용 가능)
+    for itr in range(1000):
 
-        try :
-            print("================================================")
-            print(f"loop {i} : simulation start!!")
-            print("================================================")
-            run(simulation = sim)
-            print("================================================")
-            print(f"loop {i} : simulation {sim.PROJECT_NAME} success!!")
-            print("================================================")
+        with pyDesktop(version=None, non_graphical=GUI) as desktop:
+            
+            sim = Simulation(desktop=desktop)
+            sim.desktop = desktop
 
-        except Exception as e:
-            error_msg = f"Error in iteration {i}:\n{traceback.format_exc()}\n"
-            print(error_msg, file=sys.stderr)
-            sys.stderr.flush()
-            print("================================================")
-            try:
-                sim.project.delete()
-            except:
-                pass
-            sim.desktop.kill_process()
-            del sim
-            sim = Simulation()   
-            print("================================================")
-            print(f"loop {i} : simulation failed!!")
-            print("================================================")
+            for i in range(20):
 
-        time.sleep(1)
+                try :
+                    print("================================================")
+                    print(f"loop {i} : simulation start!!")
+                    print("================================================")
+                    run(simulation = sim)
+                    print("================================================")
+                    print(f"loop {i} : simulation {sim.PROJECT_NAME} success!!")
+                    print("================================================")
+
+                except Exception as e:
+                    error_msg = f"Error in iteration {i}:\n{traceback.format_exc()}\n"
+                    print(error_msg, file=sys.stderr)
+                    sys.stderr.flush()
+                    print("================================================")
+                    try:
+                        sim.project.delete()
+                    except:
+                        pass
+
+                    # Desktop 자체를 kill하면 with 세션이 깨지므로,
+                    # 여기서는 일단 실패 처리만 하고 루프를 종료(필요하면 바깥에서 재시작)
+                    print("================================================")
+                    print(f"loop {i} : simulation failed!!")
+                    print("================================================")
+                    break
+
+                time.sleep(1)
+            
+            desktop.close()
 
