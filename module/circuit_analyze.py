@@ -12,11 +12,13 @@ def create_HFSS_link_model(link_name="HFSS_link_model", project=None, HFSS_desig
 
     oDefinitionManager = project.GetDefinitionManager()
     oModelManager = oDefinitionManager.GetManager("Model")
+    oComponentManager = oDefinitionManager.GetManager("Component")
 
     Tx_terminal_name = list(Tx_port.children.keys())[0]
     Rx_terminal_name = list(Rx_port.children.keys())[0]
 
-    params = [
+    # oModelManager로 추가
+    params1 = [
         "NAME:HFSS_design1",
         "Name:="		, "HFSS_design1",
         "ModTime:="		, f"{ModTime}",
@@ -84,6 +86,69 @@ def create_HFSS_link_model(link_name="HFSS_link_model", project=None, HFSS_desig
         "Renormalize:="		, False,
         "RenormImpedance:="	, 50
     ]
+
+
+    # oComponentManager로 추가
+    params2 = [
+        f"NAME:{link_name}",
+        "Info:="		, [			"Type:="		, 8,			"NumTerminals:="	, 2,			"DataSource:="		, "",			"ModifiedOn:="		, ModTime,			"Manufacturer:="	, "",			"Symbol:="		, "",			"ModelNames:="		, "",			"Footprint:="		, "",			"Description:="		, "",			"InfoTopic:="		, "",			"InfoHelpFile:="	, "",			"IconFile:="		, "hfss.bmp",			"Library:="		, "",			"OriginalLocation:="	, "Project",			"IEEE:="		, "",			"Author:="		, "",			"OriginalAuthor:="	, "",			"CreationDate:="	, 1769047810,			"ExampleFile:="		, "",			"HiddenComponent:="	, 0,			"CircuitEnv:="		, 0,			"GroupID:="		, 0],
+        "CircuitEnv:="		, 0,
+        "Refbase:="		, "S",
+        "NumParts:="		, 1,
+        "ModSinceLib:="		, False,
+        "Terminal:="		, [f"{Rx_terminal_name}",f"{Rx_terminal_name}","A",False,2,1,"","Electrical","0"],
+        "Terminal:="		, [f"{Tx_terminal_name}",f"{Tx_terminal_name}","A",False,3,1,"","Electrical","0"],
+        [
+            "NAME:Properties",
+            "TextProp:="		, ["Owner","RD","","HFSS"]
+        ],
+        "CompExtID:="		, 5,
+        [
+            "NAME:Parameters",
+            "VariableProp:="	, ["Tx_outer_x","D","",f"{HFSS_design.variables['Tx_outer_x']}"],
+            "VariableProp:="	, ["Rx_outer_x","D","",f"{HFSS_design.variables['Rx_outer_x']}"],
+            "VariableProp:="	, ["Tx_inner","D","",f"{HFSS_design.variables['Tx_inner']}"],
+            "VariableProp:="	, ["Tx_fillet","D","",f"{HFSS_design.variables['Tx_fillet']}"],
+            "VariableProp:="	, ["Tx_fill_factor","D","",f"{HFSS_design.variables['Tx_fill_factor']}"],
+            "VariableProp:="	, ["Rx_inner","D","",f"{HFSS_design.variables['Rx_inner']}"],
+            "VariableProp:="	, ["Rx_fillet","D","",f"{HFSS_design.variables['Rx_fillet']}"],
+            "VariableProp:="	, ["Rx_fill_factor","D","",f"{HFSS_design.variables['Rx_fill_factor']}"],
+            "VariableProp:="	, ["Tx_turns","D","",f"{HFSS_design.variables['Tx_turns']}"],
+            "VariableProp:="	, ["Rx_turns","D","",f"{HFSS_design.variables['Rx_turns']}"],
+            "VariableProp:="	, ["Tx_layer","D","",f"{HFSS_design.variables['Tx_layer']}"],
+            "VariableProp:="	, ["Rx_layer","D","",f"{HFSS_design.variables['Rx_layer']}"],
+            "VariableProp:="	, ["Tx_outer_y","HD","",f"{HFSS_design.variables['Tx_outer_y']}"],
+            "VariableProp:="	, ["Rx_outer_y","HD","",f"{HFSS_design.variables['Rx_outer_y']}"],
+            "VariableProp:="	, ["Tx_theta1","HD","",f"{HFSS_design.variables['Tx_theta1']}"],
+            "VariableProp:="	, ["Tx_theta2","HD","",f"{HFSS_design.variables['Tx_theta2']}"],
+            "VariableProp:="	, ["Rx_theta1","HD","",f"{HFSS_design.variables['Rx_theta1']}"],
+            "VariableProp:="	, ["Rx_theta2","HD","",f"{HFSS_design.variables['Rx_theta2']}"],
+            "VariableProp:="	, ["PCB_thickness","D","",f"{HFSS_design.variables['PCB_thickness']}"],
+            "VariableProp:="	, ["Tx_Tx_gap","D","",f"{HFSS_design.variables['Tx_Tx_gap']}"],
+            "VariableProp:="	, ["Rx_Rx_gap","D","",f"{HFSS_design.variables['Rx_Rx_gap']}"],
+            "VariableProp:="	, ["Tx_Rx_gap","D","",f"{HFSS_design.variables['Tx_Rx_gap']}"],
+            "TextProp:="		, ["ModelName","RD","","FieldSolver"],
+            "MenuProp:="		, ["CoSimulator","SD","","Default",0],
+            "ButtonProp:="		, ["CosimDefinition","SD","","Edit","Edit",40501,				"ButtonPropClientData:=", []]
+        ],
+        [
+            "NAME:CosimDefinitions",
+            [
+                "NAME:CosimDefinition",
+                "CosimulatorType:="	, 103,
+                "CosimDefName:="	, "Default",
+                "IsDefinition:="	, True,
+                "Connect:="		, True,
+                "ModelDefinitionName:="	, f"{link_name}",
+                "ShowRefPin2:="		, 2,
+                "LenPropName:="		, ""
+            ],
+            "DefaultCosim:="	, "Default"
+        ]
+    ]
+        
+    oModelManager.Add(params1)
+    oComponentManager.Add(params2)
 
 
     circuit_design.AddCompInstance(f"{link_name}")

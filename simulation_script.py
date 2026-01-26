@@ -17,7 +17,7 @@ import copy
 
 import pandas as pd
 
-from module.modeling import create_winding, create_PCB, create_region
+from module.modeling import create_winding, create_port, create_PCB, create_region
 from module.variable import set_variable
 from module.HFSS_analyze import HFSS_analyze, get_HFSS_results, simulation_report
 from module.circuit_analyze import create_HFSS_link_model, simulation_setup, create_schematic, create_output_variables, create_report, change_R
@@ -82,6 +82,9 @@ class Simulation() :
     def create_winding(self, design, name, up=True, *args, **kwargs):
         return create_winding(design, name, up, *args, **kwargs)
 
+    def create_port(self, design, name, ter_ref, ter_face):
+        return create_port(design, name, ter_ref, ter_face)
+
     def create_PCB(self, design):
         return create_PCB(design)
 
@@ -114,6 +117,111 @@ class Simulation() :
 
     def change_R(self, circuit_design=None, R=None):
         return change_R(circuit_design=circuit_design, R=R)
+
+
+
+    def __main__(self):
+
+        sim1 = Simulation()
+
+                
+        project1 = sim1.desktop.create_project(path=f"./simulation/{sim1.PROJECT_NAME}", name=sim1.PROJECT_NAME)
+        design1 = project1.create_design(name="HFSS_design", solver="HFSS", solution=None)
+
+
+        input_data = sim1.set_variable(design1)
+
+
+        coil_variable = {
+            "color": [255, 10, 10],
+            "turns": int(design1.variables["Tx_turns"]),
+            "layer": int(design1.variables["Tx_layer"]),
+            "outer_x": "Tx_outer_x",
+            "outer_y": "Tx_outer_y",
+            "fillet": "Tx_fillet",
+            "inner": "Tx_inner",
+            "fill_factor": "Tx_fill_factor",
+            "theta1": "Tx_theta1",
+            "theta2": "Tx_theta2",
+            "PCB_thickness": "PCB_thickness",
+            "coil_gap": "Tx_Tx_gap",
+            "move": "(PCB_thickness + Tx_Rx_gap)/2",
+        }
+
+        Tx_winding, Tx_ter1, Tx_ter2, Tx_ter_face, Tx_width = sim1.create_winding(design1, name="Tx", up=True, **coil_variable)
+        design1.modeler.mirror(assignment=[Tx_winding, Tx_ter1, Tx_ter2, Tx_ter_face], origin=[0,0,0], vector=[-1,0,0])
+        Tx_port = sim1.create_port(design=design1, name="Tx", ter_ref=Tx_ter1, ter_face=Tx_ter_face)
+
+
+        coil_variable = {
+            "color": [10, 10, 255],
+            "turns": int(design1.variables["Rx_turns"]),
+            "layer": int(design1.variables["Rx_layer"]),
+            "outer_x": "Rx_outer_x",
+            "outer_y": "Rx_outer_y",
+            "fillet": "Rx_fillet",
+            "inner": "Rx_inner",
+            "fill_factor": "Rx_fill_factor",
+            "theta1": "Rx_theta1",
+            "theta2": "Rx_theta2",
+            "PCB_thickness": "PCB_thickness",
+            "coil_gap": "Rx_Rx_gap",
+            "move": "-((PCB_thickness + Tx_Rx_gap)/2)",
+        }
+
+        Rx_winding, Rx_ter1, Rx_ter2, Rx_ter_face, Rx_width = sim1.create_winding(design1, name="Rx", up=False, **coil_variable)
+        Rx_port = sim1.create_port(design=design1, name="Rx", ter_ref=Rx_ter1, ter_face=Rx_ter_face)
+
+        PCB = sim1.create_PCB(design1)
+
+        design1.modeler.subtract(blank_list=PCB, tool_list=[Tx_winding, Tx_ter1, Tx_ter2, Rx_winding, Rx_ter1, Rx_ter2], keep_originals=True)
+
+        region = sim1.create_region(design1)
+
+        start_time = time.time()
+
+        setup = sim1.HFSS_analyze(project1, design1)
+
+        HFSS_results = sim1.get_HFSS_results(project1, design1)
+
+        simulation_report = sim1.simulation_report(design1, start_time)
+
+        design2 = project1.create_design(name="circuit_design", solver="Circuit", solution=None)
+
+
+        design2.create_HFSS_link(link_name="HFSS_link_model", project=project1, HFSS_design=design1, circuit_design=design2, Tx_port=Tx_port, Rx_port=Rx_port)
+
+        design2.simulation_setup(circuit_design=design2)
+
+        design2.create_schematic(circuit_design=design2)
+
+
+        design2.create_output_variables(circuit_design=design2)
+
+
+        design2.change_R(circuit_design=design2, R=28)
+        design2.Analyze("LinearFrequency")
+        circuit_data1 = design2.create_report(circuit_design=design2, name="circuit_design")
+
+        design2.change_R(circuit_design=design2, R=50)
+        design2.Analyze("LinearFrequency")
+        circuit_data2 = design2.create_report(circuit_design=design2, name="circuit_design")
+
+        design2.change_R(circuit_design=design2, R=100)
+        design2.Analyze("LinearFrequency")
+        circuit_data3 = design2.create_report(circuit_design=design2, name="circuit_design")
+
+        design2.change_R(circuit_design=design2, R=200)
+        design2.Analyze("LinearFrequency")
+        circuit_data4 = design2.create_report(circuit_design=design2, name="circuit_design")
+
+        design2.change_R(circuit_design=design2, R=1000)
+        design2.Analyze("LinearFrequency")
+        circuit_data5 = design2.create_report(circuit_design=design2, name="circuit_design")
+
+
+
+
 
 
         

@@ -44,9 +44,9 @@ def set_variable(simulation, design):
     # y 사이즈 제한 3.5mm
 
     simulation.Tx_outer_x = design.random_variable(variable_name="Tx_outer_x", lower=1.5, upper=2.5, resolution=0.01, unit="mm")
-    simulation.Tx_outer_y = design.random_variable(variable_name="Tx_outer_x", lower=1.2, upper=2.0, resolution=0.01, unit="mm")
+    simulation.Tx_outer_y = design.random_variable(variable_name="Tx_outer_y", lower=1.2, upper=2.0, resolution=0.01, unit="mm")
     simulation.Rx_outer_x = design.random_variable(variable_name="Rx_outer_x", lower=1.5, upper=2.5, resolution=0.01, unit="mm")
-    simulation.Rx_outer_y = design.random_variable(variable_name="Rx_outer_x", lower=1.2, upper=2.0, resolution=0.01, unit="mm")
+    simulation.Rx_outer_y = design.random_variable(variable_name="Rx_outer_y", lower=1.2, upper=2.0, resolution=0.01, unit="mm")
     simulation.Tx_ratio = simulation.Tx_outer_y / simulation.Tx_outer_x
     simulation.Rx_ratio = simulation.Rx_outer_y / simulation.Rx_outer_x
 
@@ -122,19 +122,15 @@ def set_variable(simulation, design):
 
     # Create input DataFrame
     columns = [
-        'Tx_turns', 'Rx_turns', 'Tx_outer_x', 'Tx_outer_y', 'Tx_ratio',
-        'Rx_outer_x', 'Rx_outer_y', 'Rx_ratio', 'Tx_inner', 'Rx_inner',
-        'Tx_fillet', 'Rx_fillet', 'Tx_fill_factor', 'Rx_fill_factor',
-        'Tx_layer', 'Rx_layer', 'PCB_thickness', 'Tx_Tx_gap', 'Rx_Rx_gap', 'Tx_Rx_gap',
+        'Tx_turns', 'Rx_turns', 'Tx_layer', 'Rx_layer', 'Tx_outer_x', 'Tx_outer_y', 'Tx_ratio',
+        'Rx_outer_x', 'Rx_outer_y', 'Rx_ratio', 'Tx_inner', 'Rx_inner', 'Tx_fillet', 'Rx_fillet',
+        'Tx_fill_factor', 'Rx_fill_factor', 'PCB_thickness', 'Tx_Tx_gap', 'Rx_Rx_gap', 'Tx_Rx_gap',
     ]
 
     simulation.input_raw = [
-        simulation.Tx_turns, simulation.Rx_turns, simulation.Tx_outer_x, simulation.Tx_outer_y, simulation.Tx_ratio,
-        simulation.Rx_outer_x, simulation.Rx_outer_y, simulation.Rx_ratio,
-        simulation.Tx_inner, simulation.Rx_inner, simulation.Tx_fillet, simulation.Rx_fillet,
-        simulation.Tx_fill_factor, simulation.Rx_fill_factor,
-        simulation.Tx_layer, simulation.Rx_layer, simulation.PCB_thickness,
-        simulation.Tx_Tx_gap, simulation.Rx_Rx_gap, simulation.Tx_Rx_gap
+        simulation.Tx_turns, simulation.Rx_turns, simulation.Tx_layer, simulation.Rx_layer, simulation.Tx_outer_x, simulation.Tx_outer_y, simulation.Tx_ratio,
+        simulation.Rx_outer_x, simulation.Rx_outer_y, simulation.Rx_ratio, simulation.Tx_inner, simulation.Rx_inner, simulation.Tx_fillet, simulation.Rx_fillet,
+        simulation.Tx_fill_factor, simulation.Rx_fill_factor, simulation.PCB_thickness, simulation.Tx_Tx_gap, simulation.Rx_Rx_gap, simulation.Tx_Rx_gap
     ]
     
     simulation.input = pd.DataFrame([simulation.input_raw], columns=columns)

@@ -141,17 +141,22 @@ def create_winding(design, name, up=True, *args, **kwargs):
     ter2.move([0,0,f"({move})"])
 
     ter_edges = design.modeler.create_object_from_edge([ter_edge1, ter_edge2], non_model=False)
-    ter_face = design.modeler.connect(ter_edges)
+    ter_face = design.modeler.connect(ter_edges) # list object
+    ter_face = ter_face[0]
 
     winding.color = color
     winding.transparency = 0
     winding.material_name = "copper"
 
-    port = design.lumped_port(assignment=ter_face[0], reference=[ter1], create_port_sheet=False, port_on_plane=True, integration_line=0, impedance=50, name=f"{name}_port", renormalize=True, deembed=False, terminals_rename=True)
 
-    # winding = design.model3d.unite(assignment=[winding, ter1, ter2])
+    return winding, ter1, ter2, ter_face, coil_width
 
-    return winding, ter1, ter2, port, coil_width
+
+def create_port(design, name, ter_ref, ter_face) :
+
+    port = design.lumped_port(assignment=ter_face, reference=[ter_ref], create_port_sheet=False, port_on_plane=True, integration_line=0, impedance=50, name=f"{name}_port", renormalize=True, deembed=False, terminals_rename=True)
+
+    return port
 
 
 def create_PCB(design):
