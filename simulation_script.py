@@ -360,7 +360,9 @@ if __name__ == "__main__":
     for itr in range(100000):
         desktop = None
         try:
-            with pyDesktop(version=None, non_graphical=GUI) as desktop:
+            # close_on_exit=True인 상태에서 __exit__가 블로킹되어 다음 루프로 못 넘어가는 케이스가 있어
+            # 컨텍스트 exit에서는 release만 하고, 종료는 finally에서 kill_process로 확실히 정리한다.
+            with pyDesktop(version=None, non_graphical=GUI, close_on_exit=False, new_desktop=True) as desktop:
                 print("================================================", flush=True)
                 print(f"loop {itr} : simulation start!!", flush=True)
                 print("================================================", flush=True)
