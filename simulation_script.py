@@ -385,12 +385,12 @@ if __name__ == "__main__":
             # Linux에서 1회 실행 후 AEDT 프로세스가 남아 다음 실행을 깨는 케이스가 있어,
             # 컨텍스트 종료와 별개로 프로세스를 확실히 종료한다.
             if desktop is not None:
+                # 주의: desktop.close()는 일부 환경에서 블로킹되어 다음 루프로 못 넘어갈 수 있음
+                # (close_on_exit=False로 둔 만큼 여기서는 호출하지 않음)
                 try:
-                    desktop.close()
-                except Exception:
-                    pass
-                try:
+                    print(f"[cleanup] killing AEDT pid={getattr(desktop, 'pid', None)}", flush=True)
                     desktop.kill_process()
+                    print("[cleanup] kill done", flush=True)
                 except Exception:
                     pass
             # kill 이전/이후 상관없이 flush 보장
@@ -399,6 +399,7 @@ if __name__ == "__main__":
                 sys.stderr.flush()
             except Exception:
                 pass
+            print("[cleanup] sleep 2s", flush=True)
             time.sleep(2)
         
 
