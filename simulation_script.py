@@ -262,6 +262,8 @@ def run(simulation=None):
     else:
         output_data.to_csv(csv_file, mode='w', index=False, header=True)
 
+    print("simulation done", flush=True)
+
 
     project1.close()
 
@@ -400,6 +402,16 @@ if __name__ == "__main__":
                         pass
                 except Exception:
                     pass
+            # PyAEDT Desktop init은 /tmp/aedt_grpc.lock 을 사용함. 강제 kill 시 lock 파일이 남아
+            # 다음 init이 꼬일 수 있어 cleanup에서 제거 시도.
+            try:
+                import tempfile
+                from pathlib import Path
+                lock_file = Path(tempfile.gettempdir()) / "aedt_grpc.lock"
+                if lock_file.exists():
+                    lock_file.unlink()
+            except Exception:
+                pass
             # kill 이전/이후 상관없이 flush 보장
             try:
                 sys.stdout.flush()
