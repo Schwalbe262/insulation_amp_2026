@@ -270,7 +270,7 @@ def run(simulation=None):
 
     project1.delete()
 
-    sim1.desktop.close()
+    # sim1.desktop.close()
 
 
 
@@ -343,16 +343,17 @@ if __name__ == "__main__":
     import traceback
     import sys
 
+    sim = Simulation()
+
     for i in range(10000):
 
         try :
-            sim = Simulation()
             run(simulation = sim)
-            del sim
         except Exception as e:
             error_msg = f"Error in iteration {i}:\n{traceback.format_exc()}\n"
             print(error_msg, file=sys.stderr)
             sys.stderr.flush()
+            sim.project.delete()
             break
 
         time.sleep(1)
