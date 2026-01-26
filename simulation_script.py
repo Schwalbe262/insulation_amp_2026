@@ -241,50 +241,24 @@ class Simulation() :
         project1.delete()
 
 
+
 if __name__ == "__main__":
+    import traceback
+    import sys
+
+    sim = Simulation()
 
     for i in range(5000):
-
-        sim = Simulation()
 
         try :
             sim.run()
         except Exception as e:
             print(f"Error in iteration {i}:", file=sys.stderr)
             print(traceback.format_exc(), file=sys.stderr)
-            
-            # 안전하게 정리 작업 수행
-            try:
-                if hasattr(sim, 'project') and sim.project is not None:
-                    try:
-                        sim.project.delete()
-                    except:
-                        pass
-            except:
-                pass
-            
-            try:
-                if hasattr(sim, 'desktop') and sim.desktop is not None:
-                    try:
-                        sim.desktop.kill_process()
-                    except:
-                        pass
-            except:
-                pass
-            
-            try:
-                del sim
-            except:
-                pass
-            
-            # 다음 반복을 위해 새 인스턴스 생성
-            try:
-                sim = Simulation()
-            except:
-                print(f"Failed to create new Simulation instance at iteration {i}", file=sys.stderr)
-                break
 
-
+            sim.project.delete()
+            del sim
+            sim = Simulation()
 
 
 
