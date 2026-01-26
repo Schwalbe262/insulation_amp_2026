@@ -270,6 +270,8 @@ class Simulation() :
 
         project1.delete()
 
+        sim1.desktop.close()
+
 
 
 """
