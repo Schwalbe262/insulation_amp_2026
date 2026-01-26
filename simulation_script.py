@@ -137,8 +137,26 @@ class Simulation() :
         """시뮬레이션을 실행합니다."""
         sim1 = self
 
-                
-        project1 = sim1.desktop.create_project(path=f"./simulation/{sim1.PROJECT_NAME}", name=sim1.PROJECT_NAME)
+        # simulation 디렉토리 생성 (존재하지 않으면)
+        simulation_dir = "./simulation"
+        if not os.path.exists(simulation_dir):
+            os.makedirs(simulation_dir, exist_ok=True)
+        
+        # 절대 경로로 변환
+        project_path = os.path.abspath(os.path.join(simulation_dir, sim1.PROJECT_NAME))
+        
+        # desktop이 None이거나 유효하지 않은지 확인
+        if sim1.desktop is None:
+            raise RuntimeError("Desktop instance is None. Cannot create project.")
+        
+        try:
+            project1 = sim1.desktop.create_project(path=project_path, name=sim1.PROJECT_NAME)
+        except Exception as e:
+            error_msg = f"Failed to create project '{sim1.PROJECT_NAME}' at path '{project_path}': {e}\n"
+            print(error_msg, file=sys.stderr)
+            sys.stderr.flush()
+            raise
+        
         design1 = project1.create_design(name="HFSS_design", solver="HFSS", solution=None)
 
         sim1.project = project1
