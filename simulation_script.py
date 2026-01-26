@@ -2,10 +2,22 @@ import sys
 import traceback
 import logging
 import portalocker
+import os
 
-# sys.path.insert(0, r"/gpfs/home1/r1jae262/jupyter/git/pyaedt_library/src/")
-sys.path.insert(0, r"../git/pyaedt_library/src/")
-sys.path.insert(0, r"Y:/git/pyaedt_library/src/")
+# 경로 설정 - 플랫폼에 따라 다르게 처리
+if os.name == 'nt':  # Windows
+    sys.path.insert(0, r"Y:/git/pyaedt_library/src/")
+else:  # Linux/Unix
+    # Linux 서버 경로들 시도
+    possible_paths = [
+        r"/gpfs/home1/r1jae262/jupyter/git/pyaedt_library/src/",
+        r"../git/pyaedt_library/src/",
+        os.path.join(os.path.dirname(__file__), "../git/pyaedt_library/src/"),
+    ]
+    for path in possible_paths:
+        if os.path.exists(path):
+            sys.path.insert(0, path)
+            break
 
 import pyaedt_module
 from pyaedt_module.core import pyDesktop
@@ -245,20 +257,64 @@ class Simulation() :
 if __name__ == "__main__":
     import traceback
     import sys
-
-    sim = Simulation()
-
-    for i in range(5000):
-
-        try :
-            sim.run()
-        except Exception as e:
-            print(f"Error in iteration {i}:", file=sys.stderr)
-            print(traceback.format_exc(), file=sys.stderr)
-
-            sim.project.delete()
-            del sim
+    
+    # 초기 에러 로깅 설정
+    try:
+        # 표준 출력과 에러를 모두 파일로 리다이렉트 (디버깅용)
+        log_dir = "./simul_log"
+        if not os.path.exists(log_dir):
+            os.makedirs(log_dir, exist_ok=True)
+        
+        # 초기 import 에러 확인
+        try:
             sim = Simulation()
+        except Exception as e:
+            error_msg = f"Failed to create Simulation instance: {traceback.format_exc()}\n"
+            print(error_msg, file=sys.stderr)
+            sys.stderr.flush()
+            sys.exit(1)
+        
+        for i in range(5000):
+            try:
+                sim.run()
+            except Exception as e:
+                error_msg = f"Error in iteration {i}:\n{traceback.format_exc()}\n"
+                print(error_msg, file=sys.stderr)
+                sys.stderr.flush()
+                
+                # 안전하게 정리
+                try:
+                    if hasattr(sim, 'project') and sim.project is not None:
+                        sim.project.delete()
+                except:
+                    pass
+                
+                try:
+                    if hasattr(sim, 'desktop') and sim.desktop is not None:
+                        sim.desktop.kill_process()
+                except:
+                    pass
+                
+                try:
+                    del sim
+                except:
+                    pass
+                
+                # 새 인스턴스 생성
+                try:
+                    sim = Simulation()
+                except Exception as e2:
+                    error_msg = f"Failed to create new Simulation instance at iteration {i}:\n{traceback.format_exc()}\n"
+                    print(error_msg, file=sys.stderr)
+                    sys.stderr.flush()
+                    break
+                    
+    except Exception as e:
+        # 최상위 레벨 에러 처리
+        error_msg = f"Fatal error in main:\n{traceback.format_exc()}\n"
+        print(error_msg, file=sys.stderr)
+        sys.stderr.flush()
+        sys.exit(1)
 
 
 

@@ -26,4 +26,16 @@ module load ansys-electronics/v242
 # export HOME=/gpfs/home1/r1jae262
 # cd /gpfs/home1/r1jae262/ANSYS
 
-python run.py
+# 현재 디렉토리 확인 및 로깅
+echo "Current directory: $(pwd)" >&2
+echo "Python path: $(which python)" >&2
+echo "Python version: $(python --version)" >&2
+echo "Starting run.py..." >&2
+
+# run.py 실행 (에러도 stderr로 출력)
+python run.py 2>&1
+
+# 종료 코드 확인
+exit_code=$?
+echo "run.py finished with exit code: $exit_code" >&2
+exit $exit_code
