@@ -365,7 +365,10 @@ if __name__ == "__main__":
             print(error_msg, file=sys.stderr)
             sys.stderr.flush()
             print("================================================")
-            sim.project.delete()
+            try:
+                sim.project.delete()
+            except:
+                pass
             sim.desktop.kill_process()
             del sim
             sim = Simulation()   
