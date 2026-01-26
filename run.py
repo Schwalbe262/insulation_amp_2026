@@ -11,7 +11,7 @@ if not os.path.exists(log_dir):
 
 logging.basicConfig(filename='run_debug.log', level=logging.DEBUG)
 
-script_name = "simulation_script.py"
+script_name = "run_simulation_loop.py"
 script_path = os.path.join(os.getcwd(), script_name)
 
 # 스크립트 존재 확인

@@ -348,33 +348,23 @@ if __name__ == "__main__":
     else:
         GUI = True
 
-    # Desktop 세션은 전체 루프 동안 1번만 열어서 재사용하는 것을 권장
-    # (pyaedt Desktop은 context manager로 사용 가능)
-    for itr in range(10000):
-
-        try :
-
-            with pyDesktop(version=None, non_graphical=GUI) as desktop:
-                
-                print("================================================")
-                print(f"loop {itr} : simulation start!!")
-                print("================================================")
-                sim = Simulation(desktop=desktop)
-                run(simulation = sim)
-                print("================================================")
-                print(f"loop {itr} : simulation {sim.PROJECT_NAME} success!!")
-                print("================================================")
-
-
-
-        except Exception as e:
-            error_msg = f"Error in iteration {itr}:\n{traceback.format_exc()}"
+    # 이 파일은 "1회 시뮬레이션 실행"만 담당 (반복 실행은 별도 runner에서 수행)
+    try:
+        with pyDesktop(version=None, non_graphical=GUI) as desktop:
             print("================================================")
-            print(error_msg, file=sys.stderr)
+            print("simulation start!!")
             print("================================================")
-            sys.stderr.flush()
+            sim = Simulation(desktop=desktop)
+            run(simulation=sim)
             print("================================================")
-            print(f"loop {itr} : simulation failed!!")
+            print(f"simulation {sim.PROJECT_NAME} success!!")
             print("================================================")
+    except Exception:
+        error_msg = f"Error in simulation:\n{traceback.format_exc()}"
+        print("================================================")
+        print(error_msg, file=sys.stderr)
+        print("================================================")
+        sys.stderr.flush()
+        raise
         
 
