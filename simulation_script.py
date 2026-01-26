@@ -353,7 +353,7 @@ if __name__ == "__main__":
 
         try :
             print("================================================")
-            print(f"loop {i} : simulation {sim.PROJECT_NAME} start!!")
+            print(f"loop {i} : simulation start!!")
             print("================================================")
             run(simulation = sim)
             print("================================================")
