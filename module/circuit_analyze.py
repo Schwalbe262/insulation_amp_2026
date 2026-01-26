@@ -720,11 +720,12 @@ def create_report(project, circuit_design=None, name=""):
     data_Iin = round(data_RL["mag(I(Iin)) [A]"].values[0],4)
     data_Iload = round(data_RL["mag(I(Iout)) [A]"].values[0],4)
 
-    columns = [f'Pin{name}', f'Pout{name}', f'Gv{name}', f'eff{name}', f'Vin{name}', f'Vload{name}', f'Iin{name}', f'Iload{name}']
+    columns = [f'Pin_{name}', f'Pout_{name}', f'Gv_{name}', f'eff_{name}', f'Vin_{name}', f'Vload_{name}', f'Iin_{name}', f'Iload_{name}']
     circuit_data_raw = [data_Pin, data_Pout, data_Gv, data_eff, data_Vin, data_Vload, data_Iin, data_Iload]
     circuit_data_df = pd.DataFrame([circuit_data_raw], columns=columns)
 
     return circuit_data_df
+
 
 
 

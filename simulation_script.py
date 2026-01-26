@@ -128,6 +128,8 @@ class Simulation() :
         project1 = sim1.desktop.create_project(path=f"./simulation/{sim1.PROJECT_NAME}", name=sim1.PROJECT_NAME)
         design1 = project1.create_design(name="HFSS_design", solver="HFSS", solution=None)
 
+        sim1.project = project1
+
 
         input_data = sim1.set_variable(design1)
 
@@ -201,23 +203,23 @@ class Simulation() :
 
         sim1.change_R(circuit_design=design2, R=28)
         design2.Analyze("LinearFrequency")
-        circuit_data1 = sim1.create_report(project=project1, circuit_design=design2, name="circuit_design")
+        circuit_data1 = sim1.create_report(project=project1, circuit_design=design2, name="28")
 
         sim1.change_R(circuit_design=design2, R=50)
         design2.Analyze("LinearFrequency")
-        circuit_data2 = sim1.create_report(project=project1, circuit_design=design2, name="circuit_design")
+        circuit_data2 = sim1.create_report(project=project1, circuit_design=design2, name="50")
 
         sim1.change_R(circuit_design=design2, R=100)
         design2.Analyze("LinearFrequency")
-        circuit_data3 = sim1.create_report(project=project1, circuit_design=design2, name="circuit_design")
+        circuit_data3 = sim1.create_report(project=project1, circuit_design=design2, name="100")
 
         sim1.change_R(circuit_design=design2, R=200)
         design2.Analyze("LinearFrequency")
-        circuit_data4 = sim1.create_report(project=project1, circuit_design=design2, name="circuit_design")
+        circuit_data4 = sim1.create_report(project=project1, circuit_design=design2, name="200")
 
         sim1.change_R(circuit_design=design2, R=1000)
         design2.Analyze("LinearFrequency")
-        circuit_data5 = sim1.create_report(project=project1, circuit_design=design2, name="circuit_design")
+        circuit_data5 = sim1.create_report(project=project1, circuit_design=design2, name="1000")
 
 
         sim_time = time.time() - start_time
@@ -243,15 +245,15 @@ class Simulation() :
 
 for i in range(5000):
 
+    sim = Simulation()
+
     try :
-        sim = Simulation()
         sim.run()
-        sim.desktop.kill_process()
-        del sim
     except :
         sim.desktop.kill_process()
         sim.project.delete_project_folder(path=sim.project.path)
         del sim
+        sim = Simulation()
 
 
 
