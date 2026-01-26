@@ -369,6 +369,9 @@ if __name__ == "__main__":
             sim.desktop.kill_process()
             del sim
             sim = Simulation()   
+            print("================================================")
+            print(f"loop {i} : simulation failed!!")
+            print("================================================")
 
         time.sleep(1)
 
