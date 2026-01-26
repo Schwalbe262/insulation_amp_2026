@@ -267,11 +267,17 @@ def run(simulation=None):
 
     project1.close()
 
+    print("project close", flush=True)
+
     time.sleep(1)
 
     project1.delete()
 
+    print("project delete", flush=True)
+
     sim1.desktop.close()
+
+    print("desktop close", flush=True)
 
 
 
