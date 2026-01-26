@@ -155,6 +155,7 @@ def create_winding(design, name, up=True, *args, **kwargs):
 def create_port(design, name, ter_ref, ter_face) :
 
     port = design.lumped_port(assignment=ter_face, reference=[ter_ref], create_port_sheet=False, port_on_plane=True, integration_line=0, impedance=50, name=f"{name}_port", renormalize=True, deembed=False, terminals_rename=True)
+    # assignment를 list의 형태로 주지 말것 (port 안생김)
 
     return port
 

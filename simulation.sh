@@ -11,7 +11,7 @@
 module purge
 
 source ~/miniconda3/etc/profile.d/conda.sh
-conda activate pyaedt_015
+conda activate pyaedt2026v1
 
 module load ansys-electronics/v242
 
