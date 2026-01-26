@@ -3,7 +3,8 @@ import traceback
 import logging
 import portalocker
 
-sys.path.insert(0, r"/gpfs/home1/r1jae262/jupyter/git/pyaedt_library/src/")
+# sys.path.insert(0, r"/gpfs/home1/r1jae262/jupyter/git/pyaedt_library/src/")
+sys.path.insert(0, r"../git/pyaedt_library/src/")
 sys.path.insert(0, r"Y:/git/pyaedt_library/src/")
 
 import pyaedt_module
