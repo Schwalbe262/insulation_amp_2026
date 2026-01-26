@@ -275,7 +275,9 @@ def run(simulation=None):
 
     print("project delete", flush=True)
 
-    sim1.desktop.close()
+    # sim1.desktop.close()
+
+    sim1.desktop.kill_process()
 
     print("desktop close", flush=True)
 
