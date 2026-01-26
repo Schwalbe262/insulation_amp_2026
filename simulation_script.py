@@ -349,6 +349,7 @@ if __name__ == "__main__":
         GUI = True
 
     # 이 파일은 "1회 시뮬레이션 실행"만 담당 (반복 실행은 별도 runner에서 수행)
+    desktop = None
     try:
         with pyDesktop(version=None, non_graphical=GUI) as desktop:
             print("================================================")
@@ -366,5 +367,18 @@ if __name__ == "__main__":
         print("================================================")
         sys.stderr.flush()
         raise
+    finally:
+        # Linux에서 1회 실행 후 AEDT 프로세스가 남아 다음 실행을 깨는 케이스가 있어,
+        # 컨텍스트 종료와 별개로 프로세스를 확실히 종료한다(예외는 숨기지 않음).
+        if desktop is not None:
+            try:
+                desktop.close()
+            except Exception:
+                pass
+            try:
+                desktop.kill_process()
+            except Exception:
+                pass
+            time.sleep(2)
         
 
