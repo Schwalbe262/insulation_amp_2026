@@ -363,9 +363,9 @@ if __name__ == "__main__":
             sys.stderr.flush()
             print("================================================")
             sim.project.delete()
-            sim1.desktop.kill_process()
-            del sim1
-            sim1 = Simulation()   
+            sim.desktop.kill_process()
+            del sim
+            sim = Simulation()   
 
         time.sleep(1)
 
