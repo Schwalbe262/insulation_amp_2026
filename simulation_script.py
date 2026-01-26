@@ -272,6 +272,7 @@ class Simulation() :
 
 
 
+"""
 if __name__ == "__main__":
     import traceback
     import sys
@@ -333,7 +334,26 @@ if __name__ == "__main__":
         print(error_msg, file=sys.stderr)
         sys.stderr.flush()
         sys.exit(1)
+"""
 
+
+if __name__ == "__main__":
+    import traceback
+    import sys
+
+    for i in range(10000):
+
+        try :
+            sim = Simulation()
+            sim.run()
+            del sim
+        except Exception as e:
+            error_msg = f"Error in iteration {i}:\n{traceback.format_exc()}\n"
+            print(error_msg, file=sys.stderr)
+            sys.stderr.flush()
+            break
+
+        time.sleep(1)
 
 
 
