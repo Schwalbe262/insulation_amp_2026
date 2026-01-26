@@ -355,7 +355,6 @@ if __name__ == "__main__":
         with pyDesktop(version=None, non_graphical=GUI) as desktop:
             
             sim = Simulation(desktop=desktop)
-            sim.desktop = desktop
 
             for i in range(20):
 
