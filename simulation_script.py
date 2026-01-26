@@ -268,6 +268,10 @@ def run(simulation=None):
         output_data.to_csv(csv_file, mode='w', index=False, header=True)
 
 
+    project1.close()
+
+    time.sleep(1)
+    
     project1.delete()
 
     # sim1.desktop.close()
@@ -349,18 +353,17 @@ if __name__ == "__main__":
 
         try :
             run(simulation = sim)
+            print(f"loop {i} : simulation {sim.PROJECT_NAME} success!!")
+
         except Exception as e:
             error_msg = f"Error in iteration {i}:\n{traceback.format_exc()}\n"
             print(error_msg, file=sys.stderr)
             sys.stderr.flush()
             print("================================================")
             sim.project.delete()
-            break
+            sim1.desktop.kill_process()
+            del sim1
+            sim1 = Simulation()   
 
         time.sleep(1)
 
-
-
-
-
-        
