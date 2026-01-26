@@ -350,6 +350,14 @@ if __name__ == "__main__":
     except Exception:
         pass
 
+    # Linux에서 gRPC TransportMode.UDS(Unix Domain Socket)가 반복 실행 시 간헐적으로 불안정할 수 있어
+    # INSECURE(TCP) 모드로 강제한다.
+    try:
+        from ansys.aedt.core.generic.settings import settings
+        settings.grpc_secure_mode = False
+    except Exception:
+        pass
+
     os_name = platform.system()
     if os_name == "Windows":
         GUI = False
