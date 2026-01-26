@@ -275,11 +275,10 @@ def run(simulation=None):
 
     print("project delete", flush=True)
 
+    # Desktop 종료/kill은 main loop의 finally에서만 수행 (중복 kill로 다음 Desktop init이 불안정해질 수 있음)
     # sim1.desktop.close()
-
-    sim1.desktop.kill_process()
-
-    print("desktop close", flush=True)
+    # sim1.desktop.kill_process()
+    # print("desktop close", flush=True)
 
 
 
@@ -372,6 +371,16 @@ if __name__ == "__main__":
         try:
             # close_on_exit=True인 상태에서 __exit__가 블로킹되어 다음 루프로 못 넘어가는 케이스가 있어
             # 컨텍스트 exit에서는 release만 하고, 종료는 finally에서 kill_process로 확실히 정리한다.
+            # 이전 loop에서 강제 kill 시 /tmp/aedt_grpc.lock 이 남을 수 있어, init 전에 제거 시도
+            try:
+                import tempfile
+                from pathlib import Path
+                lock_file = Path(tempfile.gettempdir()) / "aedt_grpc.lock"
+                if lock_file.exists():
+                    lock_file.unlink()
+            except Exception:
+                pass
+
             print("================================================", flush=True)
             print(f"loop {itr} : desktop init start", flush=True)
             print("================================================", flush=True)
@@ -427,6 +436,7 @@ if __name__ == "__main__":
             except Exception:
                 pass
             print("[cleanup] sleep 2s", flush=True)
-            time.sleep(2)
+            # AEDT/UDS 리소스 해제에 시간이 걸릴 수 있어 여유를 둔다
+            time.sleep(8)
         
 
