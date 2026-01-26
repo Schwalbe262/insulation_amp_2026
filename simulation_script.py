@@ -350,41 +350,31 @@ if __name__ == "__main__":
 
     # Desktop 세션은 전체 루프 동안 1번만 열어서 재사용하는 것을 권장
     # (pyaedt Desktop은 context manager로 사용 가능)
-    for itr in range(1000):
+    for itr in range(10000):
 
-        with pyDesktop(version=None, non_graphical=GUI) as desktop:
-            
-            sim = Simulation(desktop=desktop)
+        try :
 
-            for i in range(20):
+            with pyDesktop(version=None, non_graphical=GUI) as desktop:
+                
+                print("================================================")
+                print(f"loop {itr} : simulation start!!")
+                print("================================================")
+                sim = Simulation(desktop=desktop)
+                run(simulation = sim)
+                print("================================================")
+                print(f"loop {itr} : simulation {sim.PROJECT_NAME} success!!")
+                print("================================================")
 
-                try :
-                    print("================================================")
-                    print(f"loop {i} : simulation start!!")
-                    print("================================================")
-                    run(simulation = sim)
-                    print("================================================")
-                    print(f"loop {i} : simulation {sim.PROJECT_NAME} success!!")
-                    print("================================================")
 
-                except Exception as e:
-                    error_msg = f"Error in iteration {i}:\n{traceback.format_exc()}\n"
-                    print(error_msg, file=sys.stderr)
-                    sys.stderr.flush()
-                    print("================================================")
-                    try:
-                        sim.project.delete()
-                    except:
-                        pass
 
-                    # Desktop 자체를 kill하면 with 세션이 깨지므로,
-                    # 여기서는 일단 실패 처리만 하고 루프를 종료(필요하면 바깥에서 재시작)
-                    print("================================================")
-                    print(f"loop {i} : simulation failed!!")
-                    print("================================================")
-                    break
-
-                time.sleep(1)
-            
-            desktop.close()
+        except Exception as e:
+            error_msg = f"Error in iteration {itr}:\n{traceback.format_exc()}"
+            print("================================================")
+            print(error_msg, file=sys.stderr)
+            print("================================================")
+            sys.stderr.flush()
+            print("================================================")
+            print(f"loop {itr} : simulation failed!!")
+            print("================================================")
+        
 
