@@ -353,6 +353,7 @@ if __name__ == "__main__":
             error_msg = f"Error in iteration {i}:\n{traceback.format_exc()}\n"
             print(error_msg, file=sys.stderr)
             sys.stderr.flush()
+            print("================================================")
             sim.project.delete()
             break
 
