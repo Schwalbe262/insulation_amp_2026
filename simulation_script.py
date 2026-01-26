@@ -47,7 +47,7 @@ class Simulation() :
 
     def __init__(self, desktop=None) :
 
-        self.NUM_CORE = 8
+        self.NUM_CORE = 4
         self.NUM_TASK = 1
 
         # Desktop은 바깥에서 생성(with 포함)해서 주입하는 것을 권장
@@ -348,37 +348,41 @@ if __name__ == "__main__":
     else:
         GUI = True
 
-    # 이 파일은 "1회 시뮬레이션 실행"만 담당 (반복 실행은 별도 runner에서 수행)
-    desktop = None
-    try:
-        with pyDesktop(version=None, non_graphical=GUI) as desktop:
+    # 1회 실행을 1만 번 반복
+    for itr in range(100000):
+        desktop = None
+        try:
+            with pyDesktop(version=None, non_graphical=GUI) as desktop:
+                print("================================================")
+                print(f"loop {itr} : simulation start!!")
+                print("================================================")
+                sim = Simulation(desktop=desktop)
+                run(simulation=sim)
+                print("================================================")
+                print(f"loop {itr} : simulation {sim.PROJECT_NAME} success!!")
+                print("================================================")
+        except Exception:
+            error_msg = f"Error in iteration {itr}:\n{traceback.format_exc()}"
             print("================================================")
-            print("simulation start!!")
+            print(error_msg, file=sys.stderr)
             print("================================================")
-            sim = Simulation(desktop=desktop)
-            run(simulation=sim)
+            sys.stderr.flush()
             print("================================================")
-            print(f"simulation {sim.PROJECT_NAME} success!!")
+            print(f"loop {itr} : simulation failed!!")
             print("================================================")
-    except Exception:
-        error_msg = f"Error in simulation:\n{traceback.format_exc()}"
-        print("================================================")
-        print(error_msg, file=sys.stderr)
-        print("================================================")
-        sys.stderr.flush()
-        raise
-    finally:
-        # Linux에서 1회 실행 후 AEDT 프로세스가 남아 다음 실행을 깨는 케이스가 있어,
-        # 컨텍스트 종료와 별개로 프로세스를 확실히 종료한다(예외는 숨기지 않음).
-        if desktop is not None:
-            try:
-                desktop.close()
-            except Exception:
-                pass
-            try:
-                desktop.kill_process()
-            except Exception:
-                pass
+            # 실패해도 다음 iteration 진행
+        finally:
+            # Linux에서 1회 실행 후 AEDT 프로세스가 남아 다음 실행을 깨는 케이스가 있어,
+            # 컨텍스트 종료와 별개로 프로세스를 확실히 종료한다.
+            if desktop is not None:
+                try:
+                    desktop.close()
+                except Exception:
+                    pass
+                try:
+                    desktop.kill_process()
+                except Exception:
+                    pass
             time.sleep(2)
         
 

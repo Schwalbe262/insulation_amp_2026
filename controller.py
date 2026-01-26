@@ -5,7 +5,7 @@ interval_seconds = 6 * 3600  # 3시간 = 10800초
 
 # time.sleep(2*3600)
 
-itr = 10
+itr = 9
 
 while True:
     # 모든 작업 종료
