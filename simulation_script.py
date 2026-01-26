@@ -271,7 +271,7 @@ def run(simulation=None):
     project1.close()
 
     time.sleep(1)
-    
+
     project1.delete()
 
     # sim1.desktop.close()
@@ -353,7 +353,9 @@ if __name__ == "__main__":
 
         try :
             run(simulation = sim)
+            print("================================================")
             print(f"loop {i} : simulation {sim.PROJECT_NAME} success!!")
+            print("================================================")
 
         except Exception as e:
             error_msg = f"Error in iteration {i}:\n{traceback.format_exc()}\n"
