@@ -10,7 +10,7 @@ if os.name == 'nt':  # Windows
 else:  # Linux/Unix
     # Linux 서버 경로들 시도
     possible_paths = [
-        r"/gpfs/home1/r1jae262/jupyter/git/pyaedt_library/src/",
+        # r"/gpfs/home1/r1jae262/jupyter/git/pyaedt_library/src/",
         r"../git/pyaedt_library/src/",
         os.path.join(os.path.dirname(__file__), "../git/pyaedt_library/src/"),
     ]
