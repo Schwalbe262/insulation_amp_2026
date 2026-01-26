@@ -5,10 +5,10 @@ import os
 
 logging.basicConfig(filename='run_debug.log', level=logging.DEBUG)
 
-script_name = "script_circuit_10MHz.py"
+script_name = "simulation_script.py"
 script_path = os.path.join(os.getcwd(), script_name)
 
-num_processes = 1
+num_processes = 10
 
 processes = []
 for i in range(num_processes):

@@ -120,9 +120,9 @@ class Simulation() :
 
 
 
-    def __main__(self):
-
-        sim1 = Simulation()
+    def run(self):
+        """시뮬레이션을 실행합니다."""
+        sim1 = self
 
                 
         project1 = sim1.desktop.create_project(path=f"./simulation/{sim1.PROJECT_NAME}", name=sim1.PROJECT_NAME)
@@ -188,36 +188,72 @@ class Simulation() :
 
         design2 = project1.create_design(name="circuit_design", solver="Circuit", solution=None)
 
+        # link name 중요함 (HFSS_design 숫자 형태여야 제대로 link 됨)
+        sim1.create_HFSS_link_model(link_name="HFSS_design1", project=project1, HFSS_design=design1, circuit_design=design2, Tx_port=Tx_port, Rx_port=Rx_port)
 
-        design2.create_HFSS_link(link_name="HFSS_link_model", project=project1, HFSS_design=design1, circuit_design=design2, Tx_port=Tx_port, Rx_port=Rx_port)
+        sim1.simulation_setup(circuit_design=design2)
 
-        design2.simulation_setup(circuit_design=design2)
-
-        design2.create_schematic(circuit_design=design2)
-
-
-        design2.create_output_variables(circuit_design=design2)
+        sim1.create_schematic(circuit_design=design2)
 
 
-        design2.change_R(circuit_design=design2, R=28)
+        sim1.create_output_variables(circuit_design=design2)
+
+
+        sim1.change_R(circuit_design=design2, R=28)
         design2.Analyze("LinearFrequency")
-        circuit_data1 = design2.create_report(circuit_design=design2, name="circuit_design")
+        circuit_data1 = sim1.create_report(project=project1, circuit_design=design2, name="circuit_design")
 
-        design2.change_R(circuit_design=design2, R=50)
+        sim1.change_R(circuit_design=design2, R=50)
         design2.Analyze("LinearFrequency")
-        circuit_data2 = design2.create_report(circuit_design=design2, name="circuit_design")
+        circuit_data2 = sim1.create_report(project=project1, circuit_design=design2, name="circuit_design")
 
-        design2.change_R(circuit_design=design2, R=100)
+        sim1.change_R(circuit_design=design2, R=100)
         design2.Analyze("LinearFrequency")
-        circuit_data3 = design2.create_report(circuit_design=design2, name="circuit_design")
+        circuit_data3 = sim1.create_report(project=project1, circuit_design=design2, name="circuit_design")
 
-        design2.change_R(circuit_design=design2, R=200)
+        sim1.change_R(circuit_design=design2, R=200)
         design2.Analyze("LinearFrequency")
-        circuit_data4 = design2.create_report(circuit_design=design2, name="circuit_design")
+        circuit_data4 = sim1.create_report(project=project1, circuit_design=design2, name="circuit_design")
 
-        design2.change_R(circuit_design=design2, R=1000)
+        sim1.change_R(circuit_design=design2, R=1000)
         design2.Analyze("LinearFrequency")
-        circuit_data5 = design2.create_report(circuit_design=design2, name="circuit_design")
+        circuit_data5 = sim1.create_report(project=project1, circuit_design=design2, name="circuit_design")
+
+
+        sim_time = time.time() - start_time
+        pd_sim_time = pd.DataFrame({"sim_time": [sim_time]})
+
+
+        output_data = pd.concat([input_data, HFSS_results, circuit_data1, circuit_data2, circuit_data3, circuit_data4, circuit_data5, simulation_report, pd_sim_time], axis=1)
+
+        current_dir = os.getcwd()
+        csv_file = os.path.join(current_dir, f"output_data_circuit.csv")
+
+        if os.path.isfile(csv_file):
+            output_data.to_csv(csv_file, mode='a', index=False, header=False)
+        else:
+            output_data.to_csv(csv_file, mode='w', index=False, header=True)
+
+
+        project1.close()
+        time.sleep(1)
+        project1.delete_project_folder(path=project1.path)
+
+
+
+for i in range(5000):
+
+    try :
+        sim = Simulation()
+        sim.run()
+        sim.desktop.kill_process()
+        del sim
+    except :
+        sim.desktop.kill_process()
+        sim.project.delete_project_folder(path=sim.project.path)
+        del sim
+
+
 
 
 

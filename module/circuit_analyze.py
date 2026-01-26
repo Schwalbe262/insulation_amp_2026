@@ -149,8 +149,6 @@ def create_HFSS_link_model(link_name="HFSS_link_model", project=None, HFSS_desig
         
     oModelManager.Add(params1)
     oComponentManager.Add(params2)
-
-
     circuit_design.AddCompInstance(f"{link_name}")
 
 
