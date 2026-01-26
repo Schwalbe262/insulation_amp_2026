@@ -229,7 +229,7 @@ class Simulation() :
         output_data = pd.concat([input_data, HFSS_results, circuit_data1, circuit_data2, circuit_data3, circuit_data4, circuit_data5, simulation_report, pd_sim_time], axis=1)
 
         current_dir = os.getcwd()
-        csv_file = os.path.join(current_dir, f"output_data_circuit.csv")
+        csv_file = os.path.join(current_dir, f"output_data_insulation_amp_2026_v1.csv")
 
         if os.path.isfile(csv_file):
             output_data.to_csv(csv_file, mode='a', index=False, header=False)
@@ -237,11 +237,11 @@ class Simulation() :
             output_data.to_csv(csv_file, mode='w', index=False, header=True)
 
 
-        project1.close()
-        time.sleep(1)
-        project1.delete_project_folder(path=project1.path)
+        project1.delete()
 
 
+import traceback
+import sys
 
 for i in range(5000):
 
@@ -250,8 +250,9 @@ for i in range(5000):
     try :
         sim.run()
     except :
+        print(traceback.format_exc(), file=sys.stderr)
         sim.desktop.kill_process()
-        sim.project.delete_project_folder(path=sim.project.path)
+        sim.project.delete()
         del sim
         sim = Simulation()
 
