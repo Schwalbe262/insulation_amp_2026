@@ -393,6 +393,11 @@ if __name__ == "__main__":
                     print(f"[cleanup] killing AEDT pid={getattr(desktop, 'pid', None)}", flush=True)
                     desktop.kill_process()
                     print("[cleanup] kill done", flush=True)
+                    # kill 후 pid를 리셋해서, 다음 로직에서 죽은 pid를 재사용하지 않도록 한다
+                    try:
+                        desktop.aedt_process_id = None
+                    except Exception:
+                        pass
                 except Exception:
                     pass
             # kill 이전/이후 상관없이 flush 보장
