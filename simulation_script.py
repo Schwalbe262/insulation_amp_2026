@@ -133,144 +133,144 @@ class Simulation() :
 
 
 
-    def run(self):
-        """시뮬레이션을 실행합니다."""
-        sim1 = self
+def run(simulation=None):
+    """시뮬레이션을 실행합니다."""
+    sim1 = simulation
 
-        # simulation 디렉토리 생성 (존재하지 않으면)
-        simulation_dir = "./simulation"
-        if not os.path.exists(simulation_dir):
-            os.makedirs(simulation_dir, exist_ok=True)
-        
-        # 절대 경로로 변환
-        project_path = os.path.abspath(os.path.join(simulation_dir, sim1.PROJECT_NAME))
-        
-        # desktop이 None이거나 유효하지 않은지 확인
-        if sim1.desktop is None:
-            raise RuntimeError("Desktop instance is None. Cannot create project.")
-        
-        try:
-            project1 = sim1.desktop.create_project(path=project_path, name=sim1.PROJECT_NAME)
-        except Exception as e:
-            error_msg = f"Failed to create project '{sim1.PROJECT_NAME}' at path '{project_path}': {e}\n"
-            print(error_msg, file=sys.stderr)
-            sys.stderr.flush()
-            raise
-        
-        design1 = project1.create_design(name="HFSS_design", solver="HFSS", solution=None)
+    # simulation 디렉토리 생성 (존재하지 않으면)
+    simulation_dir = "./simulation"
+    if not os.path.exists(simulation_dir):
+        os.makedirs(simulation_dir, exist_ok=True)
+    
+    # 절대 경로로 변환
+    project_path = os.path.abspath(os.path.join(simulation_dir, sim1.PROJECT_NAME))
+    
+    # desktop이 None이거나 유효하지 않은지 확인
+    if sim1.desktop is None:
+        raise RuntimeError("Desktop instance is None. Cannot create project.")
+    
+    try:
+        project1 = sim1.desktop.create_project(path=project_path, name=sim1.PROJECT_NAME)
+    except Exception as e:
+        error_msg = f"Failed to create project '{sim1.PROJECT_NAME}' at path '{project_path}': {e}\n"
+        print(error_msg, file=sys.stderr)
+        sys.stderr.flush()
+        raise
+    
+    design1 = project1.create_design(name="HFSS_design", solver="HFSS", solution=None)
 
-        sim1.project = project1
-
-
-        input_data = sim1.set_variable(design1)
+    sim1.project = project1
 
 
-        coil_variable = {
-            "color": [255, 10, 10],
-            "turns": int(design1.variables["Tx_turns"]),
-            "layer": int(design1.variables["Tx_layer"]),
-            "outer_x": "Tx_outer_x",
-            "outer_y": "Tx_outer_y",
-            "fillet": "Tx_fillet",
-            "inner": "Tx_inner",
-            "fill_factor": "Tx_fill_factor",
-            "theta1": "Tx_theta1",
-            "theta2": "Tx_theta2",
-            "PCB_thickness": "PCB_thickness",
-            "coil_gap": "Tx_Tx_gap",
-            "move": "(PCB_thickness + Tx_Rx_gap)/2",
-        }
-
-        Tx_winding, Tx_ter1, Tx_ter2, Tx_ter_face, Tx_width = sim1.create_winding(design1, name="Tx", up=True, **coil_variable)
-        design1.modeler.mirror(assignment=[Tx_winding, Tx_ter1, Tx_ter2, Tx_ter_face], origin=[0,0,0], vector=[-1,0,0])
-        Tx_port = sim1.create_port(design=design1, name="Tx", ter_ref=Tx_ter1, ter_face=Tx_ter_face)
+    input_data = sim1.set_variable(design1)
 
 
-        coil_variable = {
-            "color": [10, 10, 255],
-            "turns": int(design1.variables["Rx_turns"]),
-            "layer": int(design1.variables["Rx_layer"]),
-            "outer_x": "Rx_outer_x",
-            "outer_y": "Rx_outer_y",
-            "fillet": "Rx_fillet",
-            "inner": "Rx_inner",
-            "fill_factor": "Rx_fill_factor",
-            "theta1": "Rx_theta1",
-            "theta2": "Rx_theta2",
-            "PCB_thickness": "PCB_thickness",
-            "coil_gap": "Rx_Rx_gap",
-            "move": "-((PCB_thickness + Tx_Rx_gap)/2)",
-        }
+    coil_variable = {
+        "color": [255, 10, 10],
+        "turns": int(design1.variables["Tx_turns"]),
+        "layer": int(design1.variables["Tx_layer"]),
+        "outer_x": "Tx_outer_x",
+        "outer_y": "Tx_outer_y",
+        "fillet": "Tx_fillet",
+        "inner": "Tx_inner",
+        "fill_factor": "Tx_fill_factor",
+        "theta1": "Tx_theta1",
+        "theta2": "Tx_theta2",
+        "PCB_thickness": "PCB_thickness",
+        "coil_gap": "Tx_Tx_gap",
+        "move": "(PCB_thickness + Tx_Rx_gap)/2",
+    }
 
-        Rx_winding, Rx_ter1, Rx_ter2, Rx_ter_face, Rx_width = sim1.create_winding(design1, name="Rx", up=False, **coil_variable)
-        Rx_port = sim1.create_port(design=design1, name="Rx", ter_ref=Rx_ter1, ter_face=Rx_ter_face)
-
-        PCB = sim1.create_PCB(design1)
-
-        design1.modeler.subtract(blank_list=PCB, tool_list=[Tx_winding, Tx_ter1, Tx_ter2, Rx_winding, Rx_ter1, Rx_ter2], keep_originals=True)
-
-        region = sim1.create_region(design1)
-
-        start_time = time.time()
-
-        setup = sim1.HFSS_analyze(project1, design1)
-
-        HFSS_results = sim1.get_HFSS_results(project1, design1)
-
-        simulation_report = sim1.simulation_report(design1, start_time)
-
-        design2 = project1.create_design(name="circuit_design", solver="Circuit", solution=None)
-
-        # link name 중요함 (HFSS_design 숫자 형태여야 제대로 link 됨)
-        sim1.create_HFSS_link_model(link_name="HFSS_design1", project=project1, HFSS_design=design1, circuit_design=design2, Tx_port=Tx_port, Rx_port=Rx_port)
-
-        sim1.simulation_setup(circuit_design=design2)
-
-        sim1.create_schematic(circuit_design=design2)
+    Tx_winding, Tx_ter1, Tx_ter2, Tx_ter_face, Tx_width = sim1.create_winding(design1, name="Tx", up=True, **coil_variable)
+    design1.modeler.mirror(assignment=[Tx_winding, Tx_ter1, Tx_ter2, Tx_ter_face], origin=[0,0,0], vector=[-1,0,0])
+    Tx_port = sim1.create_port(design=design1, name="Tx", ter_ref=Tx_ter1, ter_face=Tx_ter_face)
 
 
-        sim1.create_output_variables(circuit_design=design2)
+    coil_variable = {
+        "color": [10, 10, 255],
+        "turns": int(design1.variables["Rx_turns"]),
+        "layer": int(design1.variables["Rx_layer"]),
+        "outer_x": "Rx_outer_x",
+        "outer_y": "Rx_outer_y",
+        "fillet": "Rx_fillet",
+        "inner": "Rx_inner",
+        "fill_factor": "Rx_fill_factor",
+        "theta1": "Rx_theta1",
+        "theta2": "Rx_theta2",
+        "PCB_thickness": "PCB_thickness",
+        "coil_gap": "Rx_Rx_gap",
+        "move": "-((PCB_thickness + Tx_Rx_gap)/2)",
+    }
+
+    Rx_winding, Rx_ter1, Rx_ter2, Rx_ter_face, Rx_width = sim1.create_winding(design1, name="Rx", up=False, **coil_variable)
+    Rx_port = sim1.create_port(design=design1, name="Rx", ter_ref=Rx_ter1, ter_face=Rx_ter_face)
+
+    PCB = sim1.create_PCB(design1)
+
+    design1.modeler.subtract(blank_list=PCB, tool_list=[Tx_winding, Tx_ter1, Tx_ter2, Rx_winding, Rx_ter1, Rx_ter2], keep_originals=True)
+
+    region = sim1.create_region(design1)
+
+    start_time = time.time()
+
+    setup = sim1.HFSS_analyze(project1, design1)
+
+    HFSS_results = sim1.get_HFSS_results(project1, design1)
+
+    simulation_report = sim1.simulation_report(design1, start_time)
+
+    design2 = project1.create_design(name="circuit_design", solver="Circuit", solution=None)
+
+    # link name 중요함 (HFSS_design 숫자 형태여야 제대로 link 됨)
+    sim1.create_HFSS_link_model(link_name="HFSS_design1", project=project1, HFSS_design=design1, circuit_design=design2, Tx_port=Tx_port, Rx_port=Rx_port)
+
+    sim1.simulation_setup(circuit_design=design2)
+
+    sim1.create_schematic(circuit_design=design2)
 
 
-        sim1.change_R(circuit_design=design2, R=28)
-        design2.Analyze("LinearFrequency")
-        circuit_data1 = sim1.create_report(project=project1, circuit_design=design2, name="28")
-
-        sim1.change_R(circuit_design=design2, R=50)
-        design2.Analyze("LinearFrequency")
-        circuit_data2 = sim1.create_report(project=project1, circuit_design=design2, name="50")
-
-        sim1.change_R(circuit_design=design2, R=100)
-        design2.Analyze("LinearFrequency")
-        circuit_data3 = sim1.create_report(project=project1, circuit_design=design2, name="100")
-
-        sim1.change_R(circuit_design=design2, R=200)
-        design2.Analyze("LinearFrequency")
-        circuit_data4 = sim1.create_report(project=project1, circuit_design=design2, name="200")
-
-        sim1.change_R(circuit_design=design2, R=1000)
-        design2.Analyze("LinearFrequency")
-        circuit_data5 = sim1.create_report(project=project1, circuit_design=design2, name="1000")
+    sim1.create_output_variables(circuit_design=design2)
 
 
-        sim_time = time.time() - start_time
-        pd_sim_time = pd.DataFrame({"sim_time": [sim_time]})
+    sim1.change_R(circuit_design=design2, R=28)
+    design2.Analyze("LinearFrequency")
+    circuit_data1 = sim1.create_report(project=project1, circuit_design=design2, name="28")
+
+    sim1.change_R(circuit_design=design2, R=50)
+    design2.Analyze("LinearFrequency")
+    circuit_data2 = sim1.create_report(project=project1, circuit_design=design2, name="50")
+
+    sim1.change_R(circuit_design=design2, R=100)
+    design2.Analyze("LinearFrequency")
+    circuit_data3 = sim1.create_report(project=project1, circuit_design=design2, name="100")
+
+    sim1.change_R(circuit_design=design2, R=200)
+    design2.Analyze("LinearFrequency")
+    circuit_data4 = sim1.create_report(project=project1, circuit_design=design2, name="200")
+
+    sim1.change_R(circuit_design=design2, R=1000)
+    design2.Analyze("LinearFrequency")
+    circuit_data5 = sim1.create_report(project=project1, circuit_design=design2, name="1000")
 
 
-        output_data = pd.concat([input_data, HFSS_results, circuit_data1, circuit_data2, circuit_data3, circuit_data4, circuit_data5, simulation_report, pd_sim_time], axis=1)
-
-        current_dir = os.getcwd()
-        csv_file = os.path.join(current_dir, f"output_data_insulation_amp_2026_v1.csv")
-
-        if os.path.isfile(csv_file):
-            output_data.to_csv(csv_file, mode='a', index=False, header=False)
-        else:
-            output_data.to_csv(csv_file, mode='w', index=False, header=True)
+    sim_time = time.time() - start_time
+    pd_sim_time = pd.DataFrame({"sim_time": [sim_time]})
 
 
-        project1.delete()
+    output_data = pd.concat([input_data, HFSS_results, circuit_data1, circuit_data2, circuit_data3, circuit_data4, circuit_data5, simulation_report, pd_sim_time], axis=1)
 
-        sim1.desktop.close()
+    current_dir = os.getcwd()
+    csv_file = os.path.join(current_dir, f"output_data_insulation_amp_2026_v1.csv")
+
+    if os.path.isfile(csv_file):
+        output_data.to_csv(csv_file, mode='a', index=False, header=False)
+    else:
+        output_data.to_csv(csv_file, mode='w', index=False, header=True)
+
+
+    project1.delete()
+
+    sim1.desktop.close()
 
 
 
@@ -347,7 +347,7 @@ if __name__ == "__main__":
 
         try :
             sim = Simulation()
-            sim.run()
+            run(simulation = sim)
             del sim
         except Exception as e:
             error_msg = f"Error in iteration {i}:\n{traceback.format_exc()}\n"
