@@ -21,7 +21,7 @@ if not os.path.exists(script_path):
     sys.stderr.flush()
     sys.exit(1)
 
-num_processes = 10
+num_processes = 15
 
 print(f"Starting {num_processes} processes...", file=sys.stderr)
 sys.stderr.flush()
