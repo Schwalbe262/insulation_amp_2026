@@ -21,7 +21,7 @@ if not os.path.exists(script_path):
     sys.stderr.flush()
     sys.exit(1)
 
-num_processes = 20
+num_processes = 10
 
 print(f"Starting {num_processes} processes...", file=sys.stderr)
 sys.stderr.flush()
@@ -44,7 +44,7 @@ for i in range(num_processes):
         print(error_msg, file=sys.stderr)
         sys.stderr.flush()
         log_file.close()
-    time.sleep(1)
+    time.sleep(10)
 
 for idx, (p, log_file) in enumerate(processes):
     try:
