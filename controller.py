@@ -1,7 +1,7 @@
 import subprocess
 import time
 
-interval_seconds = 6 * 3600  # 3시간 = 10800초
+interval_seconds = 2 * 3600  # 3시간 = 10800초
 
 # time.sleep(2*3600)
 

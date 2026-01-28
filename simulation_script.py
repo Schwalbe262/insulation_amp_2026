@@ -159,6 +159,9 @@ def run(simulation=None):
 
     input_data = sim1.set_variable(design1)
 
+    print(input_data)
+
+
 
     coil_variable = {
         "color": [255, 10, 10],
