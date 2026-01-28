@@ -13,7 +13,7 @@ module purge
 source ~/miniconda3/etc/profile.d/conda.sh
 conda activate pyaedt2026v1
 
-module load ansys-electronics/v242
+module load ansys-electronics/v252
 
 # export ANSYSEM_ROOT242=/opt/ohpc/pub/Electronics/v242/Linux64
 # export PATH=$ANSYSEM_ROOT242/ansysedt/bin:$PATH
