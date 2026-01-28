@@ -159,7 +159,7 @@ def run(simulation=None):
 
     input_data = sim1.set_variable(design1)
 
-    print(input_data)
+    print(input_data.values.tolist()[0])
 
 
 
